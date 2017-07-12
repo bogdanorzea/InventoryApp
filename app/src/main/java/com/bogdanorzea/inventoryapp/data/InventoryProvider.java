@@ -11,7 +11,9 @@ import android.util.Log;
 
 import com.bogdanorzea.inventoryapp.data.InventoryContract.InventoryEntry;
 
-// ContentProvider for Pets app
+/**
+ * ContentProvider for Inventory database
+ */
 public class InventoryProvider extends ContentProvider {
     private static final String LOG_TAG = InventoryProvider.class.getSimpleName();
 
@@ -37,7 +39,6 @@ public class InventoryProvider extends ContentProvider {
 
     // Database helper object handle
     private InventoryDbHelper mDbHelper;
-
 
     @Override
     public boolean onCreate() {
@@ -116,7 +117,7 @@ public class InventoryProvider extends ContentProvider {
         // Create and/or open a database that will be used for reading and writing
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
-        // Insert a new pet into the pets database table with the given ContentValues
+        // Insert a new product into the products database table with the given ContentValues
         long id = db.insert(InventoryEntry.TABLE_NAME, null, values);
 
         // If the ID is -1, then the insertion failed. Log an error and return null.
