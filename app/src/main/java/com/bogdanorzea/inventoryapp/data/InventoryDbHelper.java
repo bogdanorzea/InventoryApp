@@ -1,10 +1,10 @@
-package com.bogdanorzea.inventoryapp.Data;
+package com.bogdanorzea.inventoryapp.data;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.bogdanorzea.inventoryapp.Data.InventoryContract.InventoryEntry;
+import com.bogdanorzea.inventoryapp.data.InventoryContract.InventoryEntry;
 
 public class InventoryDbHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;

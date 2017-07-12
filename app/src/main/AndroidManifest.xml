@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <provider
-            android:name=".Data.InventoryProvider"
+            android:name=".data.InventoryProvider"
             android:authorities="com.bogdanorzea.inventoryapp"
             android:exported="false" />
     </application>

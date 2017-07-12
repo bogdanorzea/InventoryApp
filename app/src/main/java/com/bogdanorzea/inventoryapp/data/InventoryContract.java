@@ -1,4 +1,4 @@
-package com.bogdanorzea.inventoryapp.Data;
+package com.bogdanorzea.inventoryapp.data;
 
 import android.content.ContentResolver;
 import android.net.Uri;
