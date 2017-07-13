@@ -25,10 +25,10 @@ public class InventoryContract {
         public static final String TABLE_NAME = "products";
 
         // Column names
-        public static final String COLUMN_NAME_PRODUCT_NAME = "product_name";
-        public static final String COLUMN_NAME_DESCRIPTION = "description";
-        public static final String COLUMN_NAME_QUANTITY = "quantity";
-        public static final String COLUMN_NAME_PRICE = "price";
+        public static final String COLUMN_PRODUCT_NAME = "product_name";
+        public static final String COLUMN_DESCRIPTION = "description";
+        public static final String COLUMN_QUANTITY = "quantity";
+        public static final String COLUMN_PRICE = "price";
         // DELETE TABLE statement
         public static final String SQL_DELETE_ENTRIES =
                 "DROP TABLE IF EXISTS " + InventoryEntry.TABLE_NAME;
@@ -43,10 +43,10 @@ public class InventoryContract {
         public static final String SQL_CREATE_ENTRIES =
                 "CREATE TABLE " + InventoryEntry.TABLE_NAME + " (" +
                         InventoryEntry._ID + INTEGER_DATA_TYPE + PRIMARY_KEY + SEPARATOR +
-                        InventoryEntry.COLUMN_NAME_PRODUCT_NAME + TEXT_DATA_TYPE + NOT_NULL + SEPARATOR +
-                        InventoryEntry.COLUMN_NAME_DESCRIPTION + TEXT_DATA_TYPE + SEPARATOR +
-                        InventoryEntry.COLUMN_NAME_QUANTITY + INTEGER_DATA_TYPE + NOT_NULL + SEPARATOR +
-                        InventoryEntry.COLUMN_NAME_PRICE + REAL_DATA_TYPE + NOT_NULL + ")";
+                        InventoryEntry.COLUMN_PRODUCT_NAME + TEXT_DATA_TYPE + NOT_NULL + SEPARATOR +
+                        InventoryEntry.COLUMN_DESCRIPTION + TEXT_DATA_TYPE + SEPARATOR +
+                        InventoryEntry.COLUMN_QUANTITY + INTEGER_DATA_TYPE + NOT_NULL + SEPARATOR +
+                        InventoryEntry.COLUMN_PRICE + REAL_DATA_TYPE + NOT_NULL + ")";
     }
 
 }

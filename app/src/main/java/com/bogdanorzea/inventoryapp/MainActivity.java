@@ -1,15 +1,52 @@
 package com.bogdanorzea.inventoryapp;
 
+import android.app.LoaderManager;
+import android.content.ContentValues;
+import android.content.CursorLoader;
+import android.content.Loader;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+
+import com.bogdanorzea.inventoryapp.data.InventoryContract;
 
 public class MainActivity extends AppCompatActivity {
+    private ListView mProductListView;
+    private ProductCursorAdaptor mProductCursorAdaptor;
+    private LoaderManager.LoaderCallbacks<Cursor> mLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            String[] projection = {
+                    InventoryContract.InventoryEntry._ID,
+                    InventoryContract.InventoryEntry.COLUMN_PRODUCT_NAME,
+                    InventoryContract.InventoryEntry.COLUMN_DESCRIPTION
+            };
+
+            // Now create and return a CursorLoader that will take care of
+            // creating a Cursor for the data being displayed.
+            return new CursorLoader(getBaseContext(), InventoryContract.InventoryEntry.CONTENT_URI, projection, null, null, null);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            mProductCursorAdaptor.swapCursor(data);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+            mProductCursorAdaptor.swapCursor(null);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,10 +59,40 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                insertDummyProduct();
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
+
+        // Set adaptor for the product list view
+        mProductListView = (ListView) findViewById(R.id.product_list);
+        mProductCursorAdaptor = new ProductCursorAdaptor(this, null);
+        mProductListView.setAdapter(mProductCursorAdaptor);
+
+        mProductListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // TODO implement something
+            }
+        });
+
+        // Prepare the loader.  Either re-connect with an existing one or start a new one.
+        getLoaderManager().initLoader(0, null, mLoaderCallbacks);
+    }
+
+    private void insertDummyProduct() {
+        // Maps values to columns
+        ContentValues values = new ContentValues();
+        values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_NAME, "Computer");
+        values.put(InventoryContract.InventoryEntry.COLUMN_DESCRIPTION, "Laptop");
+        values.put(InventoryContract.InventoryEntry.COLUMN_QUANTITY, 2);
+        values.put(InventoryContract.InventoryEntry.COLUMN_PRICE, 999.99);
+
+        // Insert the new row, returning the URI of the new row
+        Uri newRowUri = getContentResolver().insert(InventoryContract.InventoryEntry.CONTENT_URI, values);
+
+        Log.i("CatalogActivity", "New row URI " + newRowUri);
     }
 
     @Override

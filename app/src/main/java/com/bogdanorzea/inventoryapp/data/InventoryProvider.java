@@ -112,7 +112,7 @@ public class InventoryProvider extends ContentProvider {
     }
 
     private Uri insertProduct(Uri uri, ContentValues values) {
-        // TODO Check the data from the columns
+        // TODO Check data integrity before inserting into the database
 
         // Create and/or open a database that will be used for reading and writing
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -135,13 +135,13 @@ public class InventoryProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        // TODO implement delete
+        // TODO implement delete method
         return 0;
     }
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        // TODO implement update
+        // TODO implement update method
         return 0;
     }
 }
