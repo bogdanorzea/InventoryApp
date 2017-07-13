@@ -7,8 +7,6 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -29,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
             String[] projection = {
                     InventoryContract.InventoryEntry._ID,
                     InventoryContract.InventoryEntry.COLUMN_PRODUCT_NAME,
+                    InventoryContract.InventoryEntry.COLUMN_PRICE,
+                    InventoryContract.InventoryEntry.COLUMN_QUANTITY,
                     InventoryContract.InventoryEntry.COLUMN_DESCRIPTION
             };
 
@@ -55,15 +55,15 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                insertDummyProduct();
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                insertDummyProduct();
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
 
         // Set adaptor for the product list view
         mProductListView = (ListView) findViewById(R.id.product_list);
@@ -112,6 +112,8 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_add) {
+            insertDummyProduct();
         }
 
         return super.onOptionsItemSelected(item);

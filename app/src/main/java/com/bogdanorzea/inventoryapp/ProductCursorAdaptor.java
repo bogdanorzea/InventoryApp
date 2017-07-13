@@ -27,15 +27,21 @@ class ProductCursorAdaptor extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         // Get views to display information
-        TextView nameView = (TextView) view.findViewById(R.id.name);
-        TextView descriptionView = (TextView) view.findViewById(R.id.description);
+        TextView nameTextView = (TextView) view.findViewById(R.id.name);
+        TextView priceTextView = (TextView) view.findViewById(R.id.price);
+        TextView quantityTextView = (TextView) view.findViewById(R.id.quantity);
+        TextView descriptionTextView = (TextView) view.findViewById(R.id.description);
 
         // Get the cursor column names
         int nameColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_PRODUCT_NAME);
+        int priceColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_PRICE);
+        int quantityColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_QUANTITY);
         int descriptionColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_DESCRIPTION);
 
         // Add information to views
-        nameView.setText(cursor.getString(nameColumnIndex));
-        descriptionView.setText(cursor.getString(descriptionColumnIndex));
+        nameTextView.setText(cursor.getString(nameColumnIndex));
+        priceTextView.setText(Double.toString(cursor.getDouble(priceColumnIndex)));
+        quantityTextView.setText(Integer.toString(cursor.getInt(quantityColumnIndex)));
+        descriptionTextView.setText(cursor.getString(descriptionColumnIndex));
     }
 }
