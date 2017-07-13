@@ -165,7 +165,34 @@ public class InventoryProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        // TODO implement update method
-        return 0;
+        final int match = sUriMatcher.match(uri);
+        switch (match){
+            case PRODUCTS:
+                // Update all rows that match the selection and selection args
+                return updateProducts(uri, values, selection, selectionArgs);
+            case PRODUCT_ID:
+                // Update a single row given by the ID in the URI
+                selection = InventoryEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                return updateProducts(uri, values, selection, selectionArgs);
+            default:
+                throw new IllegalStateException("Update is not supported for " + uri);
+        }
+    }
+
+    private int updateProducts(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        // TODO Check data integrity before updating the database
+
+        // Create and/or open a database that will be used for reading and writing
+        SQLiteDatabase database = mDbHelper.getWritableDatabase();
+
+        // Update a product into the database with the given content values
+        int count = database.update(InventoryEntry.TABLE_NAME, values, selection, selectionArgs);
+
+        if (count!=0){
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return count;
     }
 }
