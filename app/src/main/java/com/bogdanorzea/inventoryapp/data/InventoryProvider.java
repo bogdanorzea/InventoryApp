@@ -112,7 +112,25 @@ public class InventoryProvider extends ContentProvider {
     }
 
     private Uri insertProduct(Uri uri, ContentValues values) {
-        // TODO Check data integrity before inserting into the database
+        // Check that the name is not null
+        String name = values.getAsString(InventoryEntry.COLUMN_PRODUCT_NAME);
+        if (name == null) {
+            throw new IllegalArgumentException("Product requires a name");
+        }
+
+        // No need to check the description, any value is valid (including null).
+
+        // Check that the price is not null and positive
+        Double price = values.getAsDouble(InventoryEntry.COLUMN_PRICE);
+        if (price == null || price < 0) {
+            throw new IllegalArgumentException("Invalid product price");
+        }
+
+        // Check that the quantity is not null and positive
+        Integer quantity = values.getAsInteger(InventoryEntry.COLUMN_QUANTITY);
+        if (quantity == null || quantity < 0) {
+            throw new IllegalArgumentException("Invalid product quantity");
+        }
 
         // Create and/or open a database that will be used for reading and writing
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -166,7 +184,7 @@ public class InventoryProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         final int match = sUriMatcher.match(uri);
-        switch (match){
+        switch (match) {
             case PRODUCTS:
                 // Update all rows that match the selection and selection args
                 return updateProducts(uri, values, selection, selectionArgs);
@@ -181,7 +199,29 @@ public class InventoryProvider extends ContentProvider {
     }
 
     private int updateProducts(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        // TODO Check data integrity before updating the database
+        // If the COLUMN_PRODUCT_NAME key is present, check that the name value is not null.
+        if (values.containsKey(InventoryEntry.COLUMN_PRODUCT_NAME)) {
+            String name = values.getAsString(InventoryEntry.COLUMN_PRODUCT_NAME);
+            if (name == null) {
+                throw new IllegalArgumentException("Product requires a name");
+            }
+        }
+
+        // If the COLUMN_PRICE key is present, check that the value is not null and positive.
+        if (values.containsKey(InventoryEntry.COLUMN_PRICE)) {
+            Double price = values.getAsDouble(InventoryEntry.COLUMN_PRICE);
+            if (price == null || price < 0) {
+                throw new IllegalArgumentException("Invalid product price");
+            }
+        }
+
+        // If the COLUMN_PRICE key is present, check that the value is not null and positive.
+        if (values.containsKey(InventoryEntry.COLUMN_QUANTITY)) {
+            Integer quantity = values.getAsInteger(InventoryEntry.COLUMN_QUANTITY);
+            if (quantity == null || quantity < 0) {
+                throw new IllegalArgumentException("Invalid product quantity");
+            }
+        }
 
         // Create and/or open a database that will be used for reading and writing
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
@@ -189,7 +229,7 @@ public class InventoryProvider extends ContentProvider {
         // Update a product into the database with the given content values
         int count = database.update(InventoryEntry.TABLE_NAME, values, selection, selectionArgs);
 
-        if (count!=0){
+        if (count != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
         }
 
