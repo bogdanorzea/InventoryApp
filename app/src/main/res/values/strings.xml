@@ -2,4 +2,6 @@
     <string name="app_name">Inventory App</string>
     <string name="action_settings">Settings</string>
     <string name="action_add">Add product</string>
+    <string name="action_update">Update product</string>
+    <string name="action_delete">Delete product</string>
 </resources>
