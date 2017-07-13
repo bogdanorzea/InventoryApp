@@ -1,8 +1,10 @@
 package com.bogdanorzea.inventoryapp;
 
 import android.app.LoaderManager;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -19,8 +21,8 @@ import android.widget.ListView;
 import com.bogdanorzea.inventoryapp.data.InventoryContract;
 
 public class MainActivity extends AppCompatActivity {
-    private ListView mProductListView;
     private ProductCursorAdaptor mProductCursorAdaptor;
+
     private LoaderManager.LoaderCallbacks<Cursor> mLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -66,14 +68,20 @@ public class MainActivity extends AppCompatActivity {
 //        });
 
         // Set adaptor for the product list view
-        mProductListView = (ListView) findViewById(R.id.product_list);
         mProductCursorAdaptor = new ProductCursorAdaptor(this, null);
+
+        ListView mProductListView = (ListView) findViewById(R.id.product_list);
         mProductListView.setAdapter(mProductCursorAdaptor);
 
         mProductListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // TODO implement something
+                Intent editIntent = new Intent(getBaseContext(), ProductEditorActivity.class);
+
+                Uri data = ContentUris.withAppendedId(InventoryContract.InventoryEntry.CONTENT_URI, id);
+                editIntent.setData(data);
+
+                startActivity(editIntent);
             }
         });
 
@@ -104,18 +112,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        } else if (id == R.id.action_add) {
-            insertDummyProduct();
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                return true;
+            case R.id.action_add:
+                insertDummyProduct();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
 
-        return super.onOptionsItemSelected(item);
     }
 }
