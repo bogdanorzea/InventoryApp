@@ -1,8 +1,10 @@
 package com.bogdanorzea.inventoryapp;
 
+import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -133,15 +135,40 @@ public class ProductEditorActivity extends AppCompatActivity {
                 exitActivityWithAnimation();
                 return true;
             case R.id.action_delete:
-                // TODO Add message boxes to confirm update/delete
-                deleteProduct();
-                finish();
+                askDeleteProduct();
                 return true;
             case android.R.id.home:
                 exitActivityWithAnimation();
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void askDeleteProduct() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.delete_message);
+        builder.setPositiveButton(R.string.alert_yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User confirmed product deletion
+                if (dialog != null) {
+                    deleteProduct();
+                    finish();
+                }
+            }
+        });
+        builder.setNegativeButton(R.string.alert_no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // The user dismissed the dialog
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        // Create and show the AlertDialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
     }
 
     private void deleteProduct() {
