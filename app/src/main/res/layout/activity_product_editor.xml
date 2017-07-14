@@ -8,21 +8,19 @@
     tools:context="com.bogdanorzea.inventoryapp.ProductEditorActivity">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Product name"
-        android:textSize="18sp" />
+        style="@style/editor_fields_description"
+        android:text="@string/editor_product_name" />
 
     <EditText
         android:id="@+id/edit_name"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:inputType="textCapSentences"
+        android:maxLines="1" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Product price"
-        android:textSize="18sp" />
+        style="@style/editor_fields_description"
+        android:text="@string/editor_product_price" />
 
     <EditText
         android:id="@+id/edit_price"
@@ -31,10 +29,8 @@
         android:inputType="numberDecimal" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Product quantity"
-        android:textSize="18sp" />
+        style="@style/editor_fields_description"
+        android:text="@string/editor_product_quantity" />
 
     <EditText
         android:id="@+id/edit_quantity"
@@ -43,14 +39,14 @@
         android:inputType="number" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Product description"
-        android:textSize="18sp" />
+        style="@style/editor_fields_description"
+        android:text="@string/editor_product_description" />
 
     <EditText
         android:id="@+id/edit_description"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:inputType="textCapSentences"
+        android:maxLines="1" />
 
 </LinearLayout>

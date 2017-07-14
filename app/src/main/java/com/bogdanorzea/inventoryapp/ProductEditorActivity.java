@@ -131,7 +131,7 @@ public class ProductEditorActivity extends AppCompatActivity {
                 return true;
             case R.id.action_delete:
                 deleteProduct();
-                exitActivityWithAnimation();
+                finish();
                 return true;
             case android.R.id.home:
                 exitActivityWithAnimation();
@@ -148,8 +148,6 @@ public class ProductEditorActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, R.string.editor_delete_successful, Toast.LENGTH_SHORT).show();
         }
-
-        exitActivityWithAnimation();
     }
 
     private void insertProduct() {
@@ -158,6 +156,12 @@ public class ProductEditorActivity extends AppCompatActivity {
         String descriptionString = descriptionEditText.getText().toString().trim();
         String quantityString = quantityEditText.getText().toString().trim();
         String priceString = priceEditText.getText().toString().trim();
+
+        // Prevent adding products that do not have a valid name, quantity or price
+        if(TextUtils.isEmpty(nameString)|| TextUtils.isEmpty(quantityString)|| TextUtils.isEmpty(priceString)){
+            Toast.makeText(this, R.string.editor_insert_incomplete, Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // Convert Strings to the corresponding data types for price and quantity
         int quantity = 0;
@@ -185,6 +189,16 @@ public class ProductEditorActivity extends AppCompatActivity {
                 Toast.makeText(this, R.string.editor_insert_successfully, Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, R.string.editor_insert_error, Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            // Update the current product based on the URI
+            int updatedRows = getContentResolver().update(mCurrentUri, values, null, null);
+
+            // Inform the user about the update status
+            if (updatedRows > 0) {
+                Toast.makeText(this, R.string.editor_update_successfully, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, R.string.editor_update_error, Toast.LENGTH_SHORT).show();
             }
         }
     }

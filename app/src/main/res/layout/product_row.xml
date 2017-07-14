@@ -22,9 +22,9 @@
     <!--PRICE-->
     <TextView
         android:id="@+id/price_info"
-        style="@style/product_description_information"
+        style="@style/product_attributes_description"
         android:layout_below="@id/name"
-        android:text="Price:" />
+        android:text="@string/product_price" />
 
     <TextView
         android:id="@+id/price"
@@ -38,9 +38,9 @@
     <!--QUANTITY-->
     <TextView
         android:id="@+id/quantity_info"
-        style="@style/product_description_information"
+        style="@style/product_attributes_description"
         android:layout_below="@id/price_info"
-        android:text="Quantity:" />
+        android:text="@string/product_quantity" />
 
     <TextView
         android:id="@+id/quantity"
@@ -54,9 +54,9 @@
     <!--DESCRIPTION-->
     <TextView
         android:id="@+id/description_info"
-        style="@style/product_description_information"
+        style="@style/product_attributes_description"
         android:layout_below="@id/quantity_info"
-        android:text="Description:" />
+        android:text="@string/product_description" />
 
     <TextView
         android:id="@+id/description"
