@@ -168,7 +168,6 @@ public class ProductEditorActivity extends AppCompatActivity {
         // Create and show the AlertDialog
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
-
     }
 
     private void deleteProduct() {

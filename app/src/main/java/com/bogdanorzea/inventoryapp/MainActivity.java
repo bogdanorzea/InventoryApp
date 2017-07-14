@@ -1,9 +1,10 @@
 package com.bogdanorzea.inventoryapp;
 
+import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -11,15 +12,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.bogdanorzea.inventoryapp.data.InventoryContract;
+import com.bogdanorzea.inventoryapp.data.InventoryContract.InventoryEntry;
 
 public class MainActivity extends AppCompatActivity {
     private ProductCursorAdaptor mProductCursorAdaptor;
@@ -28,15 +29,15 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             String[] projection = {
-                    InventoryContract.InventoryEntry._ID,
-                    InventoryContract.InventoryEntry.COLUMN_PRODUCT_NAME,
-                    InventoryContract.InventoryEntry.COLUMN_PRICE,
-                    InventoryContract.InventoryEntry.COLUMN_QUANTITY,
-                    InventoryContract.InventoryEntry.COLUMN_DESCRIPTION
+                    InventoryEntry._ID,
+                    InventoryEntry.COLUMN_PRODUCT_NAME,
+                    InventoryEntry.COLUMN_PRICE,
+                    InventoryEntry.COLUMN_QUANTITY,
+                    InventoryEntry.COLUMN_DESCRIPTION
             };
 
             // Return a CursorLoader that will take care of creating a Cursor for the data being displayed.
-            return new CursorLoader(getBaseContext(), InventoryContract.InventoryEntry.CONTENT_URI, projection, null, null, null);
+            return new CursorLoader(getBaseContext(), InventoryEntry.CONTENT_URI, projection, null, null, null);
         }
 
         @Override
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent editIntent = new Intent(getBaseContext(), ProductEditorActivity.class);
 
-                Uri data = ContentUris.withAppendedId(InventoryContract.InventoryEntry.CONTENT_URI, id);
+                Uri data = ContentUris.withAppendedId(InventoryEntry.CONTENT_URI, id);
                 editIntent.setData(data);
 
                 startActivity(editIntent);
@@ -86,20 +87,6 @@ public class MainActivity extends AppCompatActivity {
         getLoaderManager().initLoader(0, null, mLoaderCallbacks);
     }
 
-    private void insertDummyProduct() {
-        // Maps values to columns
-        ContentValues values = new ContentValues();
-        values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_NAME, "Computer");
-        values.put(InventoryContract.InventoryEntry.COLUMN_DESCRIPTION, "Laptop");
-        values.put(InventoryContract.InventoryEntry.COLUMN_QUANTITY, 2);
-        values.put(InventoryContract.InventoryEntry.COLUMN_PRICE, 999.99);
-
-        // Insert the new row, returning the URI of the new row
-        Uri newRowUri = getContentResolver().insert(InventoryContract.InventoryEntry.CONTENT_URI, values);
-
-        Log.i("CatalogActivity", "New row URI " + newRowUri);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -110,7 +97,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
+            case R.id.action_delete_all:
+                askDeleteAll();
                 return true;
             case R.id.action_add:
                 startActivity(new Intent(getBaseContext(), ProductEditorActivity.class));
@@ -118,6 +106,40 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void askDeleteAll() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.delete_all_message);
+        builder.setPositiveButton(R.string.alert_yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User confirmed product deletion
+                if (dialog != null) {
+                    deleteAllProduct();
+                }
+            }
+        });
+        builder.setNegativeButton(R.string.alert_no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // The user dismissed the dialog
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        // Create and show the AlertDialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+    private void deleteAllProduct() {
+        int deletedRows = getContentResolver().delete(InventoryEntry.CONTENT_URI, null, null);
+
+        if (deletedRows == 0) {
+            Toast.makeText(this, R.string.main_delete_all_failed, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, R.string.main_delete_all_successful, Toast.LENGTH_SHORT).show();
         }
     }
 }
