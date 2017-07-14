@@ -86,7 +86,10 @@ public class ProductEditorActivity extends AppCompatActivity {
         priceEditText = (EditText) findViewById(R.id.edit_price);
 
         if (mCurrentUri != null) {
+            setTitle(getString(R.string.editor_title_edit));
             getLoaderManager().initLoader(0, null, mLoaderCallbacks);
+        } else {
+            setTitle(getString(R.string.editor_title_add));
         }
     }
 
@@ -130,6 +133,7 @@ public class ProductEditorActivity extends AppCompatActivity {
                 exitActivityWithAnimation();
                 return true;
             case R.id.action_delete:
+                // TODO Add message boxes to confirm update/delete
                 deleteProduct();
                 finish();
                 return true;

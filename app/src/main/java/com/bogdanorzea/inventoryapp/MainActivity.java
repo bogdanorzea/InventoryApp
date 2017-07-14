@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.bogdanorzea.inventoryapp.data.InventoryContract;
 
@@ -61,6 +62,10 @@ public class MainActivity extends AppCompatActivity {
 
         ListView mProductListView = (ListView) findViewById(R.id.product_list);
         mProductListView.setAdapter(mProductCursorAdaptor);
+
+        // Set empty view for the product list
+        TextView emptyView = (TextView) findViewById(R.id.empty_view);
+        mProductListView.setEmptyView(emptyView);
 
         mProductListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

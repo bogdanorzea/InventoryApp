@@ -7,6 +7,7 @@
     <string name="product_description">Description:</string>
     <string name="action_add">Add a new product</string>
     <string name="action_settings">Settings</string>
+    <string name="empty_text">Add products to the list\nusing the menu button.</string>
 
     <!--Editor activity-->
     <string name="editor_product_name">Product name</string>
@@ -22,4 +23,6 @@
     <string name="editor_insert_incomplete">Incomplete product information.\nA product requires a name, quantity and price.</string>
     <string name="editor_update_successfully">Product update successfully</string>
     <string name="editor_update_error">Failed to update the product</string>
+    <string name="editor_title_edit">Edit product</string>
+    <string name="editor_title_add">Add product</string>
 </resources>

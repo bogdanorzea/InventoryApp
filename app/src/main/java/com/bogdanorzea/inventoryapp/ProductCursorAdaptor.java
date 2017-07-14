@@ -5,8 +5,10 @@ import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bogdanorzea.inventoryapp.data.InventoryContract.InventoryEntry;
 
@@ -25,7 +27,7 @@ class ProductCursorAdaptor extends CursorAdapter {
     }
 
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
+    public void bindView(View view, final Context context, Cursor cursor) {
         // Get views to display information
         TextView nameTextView = (TextView) view.findViewById(R.id.name);
         TextView priceTextView = (TextView) view.findViewById(R.id.price);
@@ -43,5 +45,14 @@ class ProductCursorAdaptor extends CursorAdapter {
         priceTextView.setText(Double.toString(cursor.getDouble(priceColumnIndex)));
         quantityTextView.setText(Integer.toString(cursor.getInt(quantityColumnIndex)));
         descriptionTextView.setText(cursor.getString(descriptionColumnIndex));
+
+        // Add button action
+        Button sellButton = (Button) view.findViewById(R.id.sell);
+        sellButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "TODO Decrease quantity by one", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
