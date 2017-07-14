@@ -21,13 +21,14 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Product description"
+        android:text="Product price"
         android:textSize="18sp" />
 
     <EditText
-        android:id="@+id/edit_description"
+        android:id="@+id/edit_price"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -44,13 +45,12 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Product price"
+        android:text="Product description"
         android:textSize="18sp" />
 
     <EditText
-        android:id="@+id/edit_price"
+        android:id="@+id/edit_description"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="numberDecimal" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

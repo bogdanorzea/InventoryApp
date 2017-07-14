@@ -34,8 +34,7 @@ public class MainActivity extends AppCompatActivity {
                     InventoryContract.InventoryEntry.COLUMN_DESCRIPTION
             };
 
-            // Now create and return a CursorLoader that will take care of
-            // creating a Cursor for the data being displayed.
+            // Return a CursorLoader that will take care of creating a Cursor for the data being displayed.
             return new CursorLoader(getBaseContext(), InventoryContract.InventoryEntry.CONTENT_URI, projection, null, null, null);
         }
 
@@ -57,16 +56,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                insertDummyProduct();
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-
         // Set adaptor for the product list view
         mProductCursorAdaptor = new ProductCursorAdaptor(this, null);
 
@@ -82,6 +71,9 @@ public class MainActivity extends AppCompatActivity {
                 editIntent.setData(data);
 
                 startActivity(editIntent);
+
+                // Implement animation transition for opening the EditorActivity
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         });
 
@@ -116,11 +108,11 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_settings:
                 return true;
             case R.id.action_add:
-                insertDummyProduct();
+                startActivity(new Intent(getBaseContext(), ProductEditorActivity.class));
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-
     }
 }
