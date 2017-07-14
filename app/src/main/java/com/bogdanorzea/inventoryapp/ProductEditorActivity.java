@@ -48,7 +48,7 @@ public class ProductEditorActivity extends AppCompatActivity {
             int quantityColumnIndex = data.getColumnIndex(InventoryEntry.COLUMN_QUANTITY);
             int priceColumnIndex = data.getColumnIndex(InventoryEntry.COLUMN_PRICE);
 
-            if(data.moveToFirst()){
+            if (data.moveToFirst()) {
                 // Get data from cursor
                 String name = data.getString(nameColumnIndex);
                 String description = data.getString(descriptionColumnIndex);
@@ -162,7 +162,7 @@ public class ProductEditorActivity extends AppCompatActivity {
         String priceString = priceEditText.getText().toString().trim();
 
         // Prevent adding products that do not have a valid name, quantity or price
-        if(TextUtils.isEmpty(nameString)|| TextUtils.isEmpty(quantityString)|| TextUtils.isEmpty(priceString)){
+        if (TextUtils.isEmpty(nameString) || TextUtils.isEmpty(quantityString) || TextUtils.isEmpty(priceString)) {
             Toast.makeText(this, R.string.editor_insert_incomplete, Toast.LENGTH_SHORT).show();
             return;
         }

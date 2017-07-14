@@ -8,6 +8,9 @@
     <string name="action_add">Add a new product</string>
     <string name="action_settings">Settings</string>
     <string name="empty_text">Add products to the list\nusing the menu button.</string>
+    <string name="sell_decrease_successfully">Quantity decreased by one</string>
+    <string name="sell_decrease_error">Error decreasing the quantity</string>
+    <string name="sell_decrease_negative_error">Cannot have negative quantity</string>
 
     <!--Editor activity-->
     <string name="editor_product_name">Product name</string>

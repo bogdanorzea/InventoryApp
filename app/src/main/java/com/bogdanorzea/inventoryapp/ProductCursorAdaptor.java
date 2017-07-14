@@ -1,7 +1,10 @@
 package com.bogdanorzea.inventoryapp;
 
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +13,7 @@ import android.widget.CursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bogdanorzea.inventoryapp.data.InventoryContract;
 import com.bogdanorzea.inventoryapp.data.InventoryContract.InventoryEntry;
 
 class ProductCursorAdaptor extends CursorAdapter {
@@ -27,7 +31,7 @@ class ProductCursorAdaptor extends CursorAdapter {
     }
 
     @Override
-    public void bindView(View view, final Context context, Cursor cursor) {
+    public void bindView(View view, final Context context, final Cursor cursor) {
         // Get views to display information
         TextView nameTextView = (TextView) view.findViewById(R.id.name);
         TextView priceTextView = (TextView) view.findViewById(R.id.price);
@@ -35,15 +39,18 @@ class ProductCursorAdaptor extends CursorAdapter {
         TextView descriptionTextView = (TextView) view.findViewById(R.id.description);
 
         // Get the cursor column names
+        int idColumnIndex = cursor.getColumnIndex(InventoryEntry._ID);
         int nameColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_PRODUCT_NAME);
         int priceColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_PRICE);
         int quantityColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_QUANTITY);
         int descriptionColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_DESCRIPTION);
 
         // Add information to views
+        final int productId = cursor.getInt(idColumnIndex);
         nameTextView.setText(cursor.getString(nameColumnIndex));
         priceTextView.setText(Double.toString(cursor.getDouble(priceColumnIndex)));
-        quantityTextView.setText(Integer.toString(cursor.getInt(quantityColumnIndex)));
+        final int productQuantity = cursor.getInt(quantityColumnIndex);
+        quantityTextView.setText(Integer.toString(productQuantity));
         descriptionTextView.setText(cursor.getString(descriptionColumnIndex));
 
         // Add button action
@@ -51,7 +58,24 @@ class ProductCursorAdaptor extends CursorAdapter {
         sellButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "TODO Decrease quantity by one", Toast.LENGTH_SHORT).show();
+                if (productQuantity > 0) {
+                    // Create Uri for this product
+                    Uri uri = ContentUris.withAppendedId(InventoryContract.InventoryEntry.CONTENT_URI, productId);
+
+                    // Add new quantity for product
+                    ContentValues values = new ContentValues();
+                    values.put(InventoryContract.InventoryEntry.COLUMN_QUANTITY, productQuantity - 1);
+
+                    // Update the quantity
+                    int updatedRows = context.getContentResolver().update(uri, values, null, null);
+                    if (updatedRows > 0) {
+                        Toast.makeText(context, R.string.sell_decrease_successfully, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, R.string.sell_decrease_error, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(context, R.string.sell_decrease_negative_error, Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
