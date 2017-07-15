@@ -47,4 +47,5 @@
     <string name="editor_product_photo">Product photo</string>
     <string name="order_product">Order product</string>
     <string name="editor_supplier_email_invalid">Invalid e-mail address</string>
+    <string name="chose_photo">Chose...</string>
 </resources>

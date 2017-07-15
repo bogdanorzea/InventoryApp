@@ -1,5 +1,6 @@
 package com.bogdanorzea.inventoryapp;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.content.ContentValues;
@@ -8,24 +9,37 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bogdanorzea.inventoryapp.data.InventoryContract.InventoryEntry;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+
 public class ProductEditorActivity extends AppCompatActivity {
+    private static final String LOG_TAG = ProductEditorActivity.class.getSimpleName();
+    private static final int REQUEST_CODE = 1;
+    private static final int LOADER_INITIALIZE = 0;
     private Uri mCurrentUri;
 
     private EditText nameEditText;
@@ -35,6 +49,8 @@ public class ProductEditorActivity extends AppCompatActivity {
     private EditText supplierEditText;
     private EditText supplierEmailEditText;
     private Button orderButton;
+    private Button cameraButton;
+    private ImageView productImage;
 
     // Touch listener for the changes to the product
     private boolean mChanged = false;
@@ -53,13 +69,12 @@ public class ProductEditorActivity extends AppCompatActivity {
             // Projection for Cursor
             String[] projection = new String[]{
                     InventoryEntry.COLUMN_PRODUCT_NAME,
-                    InventoryEntry.COLUMN_PHOTO,
                     InventoryEntry.COLUMN_DESCRIPTION,
                     InventoryEntry.COLUMN_QUANTITY,
                     InventoryEntry.COLUMN_PRICE,
-                    InventoryEntry.COLUMN_PHOTO,
                     InventoryEntry.COLUMN_SUPPLIER,
-                    InventoryEntry.COLUMN_SUPPLIER_EMAIL
+                    InventoryEntry.COLUMN_SUPPLIER_EMAIL,
+                    InventoryEntry.COLUMN_IMAGE
             };
 
             // Return a Cursor for the data to be displayed
@@ -73,10 +88,9 @@ public class ProductEditorActivity extends AppCompatActivity {
             int descriptionColumnIndex = data.getColumnIndex(InventoryEntry.COLUMN_DESCRIPTION);
             int quantityColumnIndex = data.getColumnIndex(InventoryEntry.COLUMN_QUANTITY);
             int priceColumnIndex = data.getColumnIndex(InventoryEntry.COLUMN_PRICE);
-            int photoColumnIndex = data.getColumnIndex(InventoryEntry.COLUMN_PHOTO);
             int supplierColumnIndex = data.getColumnIndex(InventoryEntry.COLUMN_SUPPLIER);
             int supplierEmailColumnIndex = data.getColumnIndex(InventoryEntry.COLUMN_SUPPLIER_EMAIL);
-
+            int photoColumnIndex = data.getColumnIndex(InventoryEntry.COLUMN_IMAGE);
 
             if (data.moveToFirst()) {
                 // Get data from cursor
@@ -86,12 +100,14 @@ public class ProductEditorActivity extends AppCompatActivity {
                 double price = data.getDouble(priceColumnIndex);
                 String supplier = data.getString(supplierColumnIndex);
                 String supplierEmail = data.getString(supplierEmailColumnIndex);
+                byte[] imgByte = data.getBlob(photoColumnIndex);
 
 
                 // Set data to the corresponding EditText
                 nameEditText.setText(name);
                 descriptionEditText.setText(description);
                 quantityTextView.setText(Integer.toString(quantity));
+                productImage.setImageBitmap(BitmapFactory.decodeByteArray(imgByte, 0, imgByte.length));
                 priceEditText.setText(Double.toString(price));
                 supplierEditText.setText(supplier);
                 supplierEmailEditText.setText(supplierEmail);
@@ -105,10 +121,20 @@ public class ProductEditorActivity extends AppCompatActivity {
             descriptionEditText.setText("");
             quantityTextView.setText("");
             priceEditText.setText("");
+            productImage.setImageResource(R.drawable.image_not_found);
             supplierEditText.setText("");
             supplierEmailEditText.setText("");
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            new LoadImageAsyncTask().execute(data);
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -237,15 +263,14 @@ public class ProductEditorActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
                 if (TextUtils.isEmpty(supplierEmailEditText.getText().toString().trim())) {
                     supplierEmailEditText.setError(getString(R.string.editor_supplier_email_required));
-                } else if(!validEmail(supplierEmailEditText.getText().toString().trim())){
+                } else if (!validEmail(supplierEmailEditText.getText().toString().trim())) {
                     supplierEmailEditText.setError(getString(R.string.editor_supplier_email_invalid));
-                }
-                else {
+                } else {
                     supplierEditText.setError(null);
                 }
             }
 
-            boolean validEmail(String email){
+            boolean validEmail(String email) {
                 String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
                 java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
                 java.util.regex.Matcher m = p.matcher(email);
@@ -287,11 +312,25 @@ public class ProductEditorActivity extends AppCompatActivity {
             }
         });
 
+        // Image
+        productImage = (ImageView) findViewById(R.id.product_image);
+        cameraButton = (Button) findViewById(R.id.camera_button);
+        cameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                startActivityForResult(intent, REQUEST_CODE);
+            }
+        });
+
         // Check if the Editor was started with an Uri intent
         mCurrentUri = getIntent().getData();
         if (mCurrentUri != null) {
             setTitle(getString(R.string.editor_title_edit));
-            getLoaderManager().initLoader(0, null, mLoaderCallbacks);
+            getLoaderManager().initLoader(LOADER_INITIALIZE, null, mLoaderCallbacks);
         } else {
             setTitle(getString(R.string.editor_title_add));
         }
@@ -338,9 +377,7 @@ public class ProductEditorActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_insert:
-                if (insertProduct()) {
-                    exitActivityWithAnimation();
-                }
+                new InsertProductAsyncTask().execute();
                 return true;
             case R.id.action_delete:
                 askDeleteProduct();
@@ -423,63 +460,116 @@ public class ProductEditorActivity extends AppCompatActivity {
         }
     }
 
-    private boolean insertProduct() {
-        // Get the strings from EditTexts
-        String nameString = nameEditText.getText().toString().trim();
-        String descriptionString = descriptionEditText.getText().toString().trim();
-        String quantityString = quantityTextView.getText().toString().trim();
-        String priceString = priceEditText.getText().toString().trim();
-        String supplierString = supplierEditText.getText().toString().trim();
-        String supplierEmailString = supplierEmailEditText.getText().toString().trim();
-
-        // Prevent adding products that do not have a valid name, quantity or price
-        if (TextUtils.isEmpty(nameString) || TextUtils.isEmpty(quantityString) || TextUtils.isEmpty(priceString) ||
-                TextUtils.isEmpty(supplierString) || TextUtils.isEmpty(supplierEmailString)) {
-            Toast.makeText(this, R.string.editor_insert_incomplete, Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        // Convert Strings to the corresponding data types for price and quantity
-        int quantity = 0;
-        if (!TextUtils.isEmpty(quantityString)) {
-            quantity = Integer.parseInt(quantityString);
-        }
-        double price = 0.0;
-        if (!TextUtils.isEmpty(priceString)) {
-            price = Double.parseDouble(priceString);
-        }
-
-        // Map the values to the corresponding columns
-        ContentValues values = new ContentValues();
-        values.put(InventoryEntry.COLUMN_PRODUCT_NAME, nameString);
-        values.put(InventoryEntry.COLUMN_DESCRIPTION, descriptionString);
-        values.put(InventoryEntry.COLUMN_QUANTITY, quantity);
-        values.put(InventoryEntry.COLUMN_PRICE, price);
-        values.put(InventoryEntry.COLUMN_SUPPLIER, supplierString);
-        values.put(InventoryEntry.COLUMN_SUPPLIER_EMAIL, supplierEmailString);
-
-        if (mCurrentUri == null) {
-            // Insert the new row, returning the URI of the new row
-            Uri newRowUri = getContentResolver().insert(InventoryEntry.CONTENT_URI, values);
-
-            // Inform the user about the insertion status
-            if (newRowUri != null) {
-                Toast.makeText(this, R.string.editor_insert_successfully, Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, R.string.editor_insert_error, Toast.LENGTH_SHORT).show();
+    class LoadImageAsyncTask extends AsyncTask<Intent, Void, Bitmap> {
+        @Override
+        protected Bitmap doInBackground(Intent... params) {
+            try {
+                InputStream stream = getContentResolver().openInputStream(params[0].getData());
+                return BitmapFactory.decodeStream(stream);
+            } catch (FileNotFoundException e) {
+                Log.e(LOG_TAG, "Error getting the image", e);
             }
-        } else {
-            // Update the current product based on the URI
-            int updatedRows = getContentResolver().update(mCurrentUri, values, null, null);
+            return null;
+        }
 
-            // Inform the user about the update status
-            if (updatedRows > 0) {
-                Toast.makeText(this, R.string.editor_update_successfully, Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, R.string.editor_update_error, Toast.LENGTH_SHORT).show();
+        @Override
+        protected void onPostExecute(Bitmap bmp) {
+            productImage.setImageBitmap(bmp);
+        }
+    }
+
+    class InsertProductAsyncTask extends AsyncTask<Void, Integer, Boolean> {
+        private String nameString;
+        private String descriptionString;
+        private String quantityString;
+        private String priceString;
+        private Bitmap bitmap;
+        private String supplierString;
+        private String supplierEmailString;
+
+        @Override
+        protected void onPreExecute() {
+            // Get the strings from EditTexts
+            nameString = nameEditText.getText().toString().trim();
+            descriptionString = descriptionEditText.getText().toString().trim();
+            quantityString = quantityTextView.getText().toString().trim();
+            priceString = priceEditText.getText().toString().trim();
+            supplierString = supplierEditText.getText().toString().trim();
+            supplierEmailString = supplierEmailEditText.getText().toString().trim();
+
+            // Get the picture bitmap
+            bitmap = ((BitmapDrawable) productImage.getDrawable()).getBitmap();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (result) {
+                exitActivityWithAnimation();
             }
         }
 
-        return true;
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            Toast.makeText(ProductEditorActivity.this, values[0], Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            // Prevent adding products that do not have a valid name, quantity or price
+            if (TextUtils.isEmpty(nameString) || TextUtils.isEmpty(quantityString) || TextUtils.isEmpty(priceString) ||
+                    TextUtils.isEmpty(supplierString) || TextUtils.isEmpty(supplierEmailString)) {
+                publishProgress(R.string.editor_insert_incomplete);
+                return false;
+            }
+
+            // Convert Strings to the corresponding data types for price and quantity
+            int quantity = 0;
+            if (!TextUtils.isEmpty(quantityString)) {
+                quantity = Integer.parseInt(quantityString);
+            }
+            double price = 0.0;
+            if (!TextUtils.isEmpty(priceString)) {
+                price = Double.parseDouble(priceString);
+            }
+
+            // Convert Bitmap to byte array and reduce quality of image to < 1MB
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream);
+            byte[] img = outputStream.toByteArray();
+
+            // Map the values to the corresponding columns
+            ContentValues values = new ContentValues();
+            values.put(InventoryEntry.COLUMN_PRODUCT_NAME, nameString);
+            values.put(InventoryEntry.COLUMN_DESCRIPTION, descriptionString);
+            values.put(InventoryEntry.COLUMN_QUANTITY, quantity);
+            values.put(InventoryEntry.COLUMN_PRICE, price);
+            values.put(InventoryEntry.COLUMN_IMAGE, img);
+            values.put(InventoryEntry.COLUMN_SUPPLIER, supplierString);
+            values.put(InventoryEntry.COLUMN_SUPPLIER_EMAIL, supplierEmailString);
+
+            if (mCurrentUri == null) {
+                // Insert the new row, returning the URI of the new row
+                Uri newRowUri = getContentResolver().insert(InventoryEntry.CONTENT_URI, values);
+
+                // Inform the user about the insertion status
+                if (newRowUri != null) {
+                    publishProgress(R.string.editor_insert_successfully);
+                } else {
+                    publishProgress(R.string.editor_insert_error);
+                }
+            } else {
+                // Update the current product based on the URI
+                int updatedRows = getContentResolver().update(mCurrentUri, values, null, null);
+
+                // Inform the user about the update status
+                if (updatedRows > 0) {
+                    publishProgress(R.string.editor_update_successfully);
+                } else {
+                    publishProgress(R.string.editor_update_error);
+                }
+            }
+
+            return true;
+        }
     }
 }

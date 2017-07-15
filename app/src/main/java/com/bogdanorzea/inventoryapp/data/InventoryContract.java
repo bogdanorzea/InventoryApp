@@ -29,7 +29,7 @@ public class InventoryContract {
         public static final String COLUMN_DESCRIPTION = "description";
         public static final String COLUMN_QUANTITY = "quantity";
         public static final String COLUMN_PRICE = "price";
-        public static final String COLUMN_PHOTO = "photo";
+        public static final String COLUMN_IMAGE = "image";
         public static final String COLUMN_SUPPLIER = "supplier";
         public static final String COLUMN_SUPPLIER_EMAIL = "supplier_email";
 
@@ -54,7 +54,7 @@ public class InventoryContract {
                         InventoryEntry.COLUMN_DESCRIPTION + TEXT_DATA_TYPE + SEPARATOR +
                         InventoryEntry.COLUMN_QUANTITY + INTEGER_DATA_TYPE + NOT_NULL + SEPARATOR +
                         InventoryEntry.COLUMN_PRICE + REAL_DATA_TYPE + NOT_NULL + SEPARATOR +
-                        InventoryEntry.COLUMN_PHOTO + BLOB_DATA_TYPE + SEPARATOR +
+                        InventoryEntry.COLUMN_IMAGE + BLOB_DATA_TYPE + SEPARATOR +
                         InventoryEntry.COLUMN_SUPPLIER + TEXT_DATA_TYPE + NOT_NULL + SEPARATOR +
                         InventoryEntry.COLUMN_SUPPLIER_EMAIL + TEXT_DATA_TYPE + NOT_NULL +")";
     }
