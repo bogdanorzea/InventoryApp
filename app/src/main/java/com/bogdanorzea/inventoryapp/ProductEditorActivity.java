@@ -282,6 +282,7 @@ public class ProductEditorActivity extends AppCompatActivity {
         orderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mChanged = true;
                 if (supplierEmailEditText.getError() == null && supplierEditText.getError() == null && nameEditText.getError() == null) {
                     Intent emailIntent = new Intent(Intent.ACTION_SEND);
                     emailIntent.setType("text/plain");
@@ -316,6 +317,7 @@ public class ProductEditorActivity extends AppCompatActivity {
         addImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mChanged = true;
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);

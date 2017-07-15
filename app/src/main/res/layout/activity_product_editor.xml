@@ -6,9 +6,12 @@
     <LinearLayout xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:orientation="vertical"
         android:padding="16dp"
         tools:context="com.bogdanorzea.inventoryapp.ProductEditorActivity">
+
         <!--PRODUCT NAME-->
         <TextView
             style="@style/editor_text_view"
@@ -97,7 +100,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:padding="18dp"
-            android:text="@string/chose_photo"
+            android:text="@string/choose_photo"
             android:textColor="@color/colorPrimaryText"
             android:textSize="18sp" />
 
