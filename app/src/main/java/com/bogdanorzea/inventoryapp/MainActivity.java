@@ -32,8 +32,7 @@ public class MainActivity extends AppCompatActivity {
                     InventoryEntry._ID,
                     InventoryEntry.COLUMN_PRODUCT_NAME,
                     InventoryEntry.COLUMN_PRICE,
-                    InventoryEntry.COLUMN_QUANTITY,
-                    InventoryEntry.COLUMN_DESCRIPTION
+                    InventoryEntry.COLUMN_QUANTITY
             };
 
             // Return a CursorLoader that will take care of creating a Cursor for the data being displayed.
@@ -77,8 +76,6 @@ public class MainActivity extends AppCompatActivity {
                 editIntent.setData(data);
 
                 startActivity(editIntent);
-
-                // Implement animation transition for opening the EditorActivity
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         });

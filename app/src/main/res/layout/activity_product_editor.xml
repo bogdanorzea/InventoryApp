@@ -40,6 +40,7 @@
         <Button
             android:id="@+id/decrease_quantity_button"
             style="@style/editor_button"
+            android:layout_marginEnd="4dp"
             android:layout_marginRight="4dp"
             android:text="-" />
 
@@ -57,6 +58,7 @@
             android:id="@+id/increase_quantity_button"
             style="@style/editor_button"
             android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
             android:text="+" />
     </LinearLayout>
 

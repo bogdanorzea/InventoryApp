@@ -36,14 +36,12 @@ class ProductCursorAdaptor extends CursorAdapter {
         TextView nameTextView = (TextView) view.findViewById(R.id.name);
         TextView priceTextView = (TextView) view.findViewById(R.id.price);
         TextView quantityTextView = (TextView) view.findViewById(R.id.quantity);
-        TextView descriptionTextView = (TextView) view.findViewById(R.id.description);
 
         // Get the cursor column names
         int idColumnIndex = cursor.getColumnIndex(InventoryEntry._ID);
         int nameColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_PRODUCT_NAME);
         int priceColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_PRICE);
         int quantityColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_QUANTITY);
-        int descriptionColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_DESCRIPTION);
 
         // Add information to views
         final int productId = cursor.getInt(idColumnIndex);
@@ -51,7 +49,6 @@ class ProductCursorAdaptor extends CursorAdapter {
         priceTextView.setText(Double.toString(cursor.getDouble(priceColumnIndex)));
         final int productQuantity = cursor.getInt(quantityColumnIndex);
         quantityTextView.setText(Integer.toString(productQuantity));
-        descriptionTextView.setText(cursor.getString(descriptionColumnIndex));
 
         // Add button action
         Button sellButton = (Button) view.findViewById(R.id.sell);
