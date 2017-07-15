@@ -29,16 +29,23 @@ public class InventoryContract {
         public static final String COLUMN_DESCRIPTION = "description";
         public static final String COLUMN_QUANTITY = "quantity";
         public static final String COLUMN_PRICE = "price";
+        public static final String COLUMN_PHOTO = "photo";
+        public static final String COLUMN_SUPPLIER = "supplier";
+        public static final String COLUMN_SUPPLIER_EMAIL = "supplier_email";
+
         // DELETE TABLE statement
         public static final String SQL_DELETE_ENTRIES =
                 "DROP TABLE IF EXISTS " + InventoryEntry.TABLE_NAME;
+
         // Data types
         static final String TEXT_DATA_TYPE = " TEXT";
         static final String PRIMARY_KEY = " PRIMARY KEY";
         static final String INTEGER_DATA_TYPE = " INTEGER";
         static final String REAL_DATA_TYPE = " REAL";
+        static final String BLOB_DATA_TYPE = " BLOB";
         static final String SEPARATOR = ",";
         static final String NOT_NULL = " NOT NULL";
+
         // CREATE TABLE statement
         public static final String SQL_CREATE_ENTRIES =
                 "CREATE TABLE " + InventoryEntry.TABLE_NAME + " (" +
@@ -46,7 +53,10 @@ public class InventoryContract {
                         InventoryEntry.COLUMN_PRODUCT_NAME + TEXT_DATA_TYPE + NOT_NULL + SEPARATOR +
                         InventoryEntry.COLUMN_DESCRIPTION + TEXT_DATA_TYPE + SEPARATOR +
                         InventoryEntry.COLUMN_QUANTITY + INTEGER_DATA_TYPE + NOT_NULL + SEPARATOR +
-                        InventoryEntry.COLUMN_PRICE + REAL_DATA_TYPE + NOT_NULL + ")";
+                        InventoryEntry.COLUMN_PRICE + REAL_DATA_TYPE + NOT_NULL + SEPARATOR +
+                        InventoryEntry.COLUMN_PHOTO + BLOB_DATA_TYPE + SEPARATOR +
+                        InventoryEntry.COLUMN_SUPPLIER + TEXT_DATA_TYPE + NOT_NULL + SEPARATOR +
+                        InventoryEntry.COLUMN_SUPPLIER_EMAIL + TEXT_DATA_TYPE + NOT_NULL +")";
     }
 
 }

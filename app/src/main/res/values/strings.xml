@@ -40,4 +40,11 @@
     <string name="editor_name_required">Name required</string>
     <string name="editor_price_required">Price required</string>
     <string name="discard_message">Do you want to discard changes?</string>
+    <string name="editor_product_supplier">Supplier name</string>
+    <string name="editor_product_supplier_email">Product supplier e-mail</string>
+    <string name="editor_supplier_required">Supplier name required</string>
+    <string name="editor_supplier_email_required">Supplier e-mail address required</string>
+    <string name="editor_product_photo">Product photo</string>
+    <string name="order_product">Order product</string>
+    <string name="editor_supplier_email_invalid">Invalid e-mail address</string>
 </resources>

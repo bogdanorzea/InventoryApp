@@ -132,6 +132,20 @@ public class InventoryProvider extends ContentProvider {
             throw new IllegalArgumentException("Invalid product quantity");
         }
 
+        // No need to check the photo, any value is valid (including null).
+
+        // Check that the supplier is not null
+        String supplier = values.getAsString(InventoryEntry.COLUMN_SUPPLIER);
+        if (supplier == null) {
+            throw new IllegalArgumentException("Product requires a supplier name");
+        }
+
+        // Check that the supplier is not null
+        String supplierEmail = values.getAsString(InventoryEntry.COLUMN_SUPPLIER_EMAIL);
+        if (supplierEmail == null) {
+            throw new IllegalArgumentException("Product requires a supplier e-mail");
+        }
+
         // Create and/or open a database that will be used for reading and writing
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
@@ -220,6 +234,22 @@ public class InventoryProvider extends ContentProvider {
             Integer quantity = values.getAsInteger(InventoryEntry.COLUMN_QUANTITY);
             if (quantity == null || quantity < 0) {
                 throw new IllegalArgumentException("Invalid product quantity");
+            }
+        }
+
+        // If the COLUMN_SUPPLIER key is present, check that the supplier is not null
+        if (values.containsKey(InventoryEntry.COLUMN_SUPPLIER)) {
+            String supplier = values.getAsString(InventoryEntry.COLUMN_SUPPLIER);
+            if (supplier == null) {
+                throw new IllegalArgumentException("Product requires a supplier name");
+            }
+        }
+
+        // If the COLUMN_SUPPLIER_EMAIL key is present, check that the email is not null
+        if (values.containsKey(InventoryEntry.COLUMN_SUPPLIER_EMAIL)) {
+            String supplierEmail = values.getAsString(InventoryEntry.COLUMN_SUPPLIER_EMAIL);
+            if (supplierEmail == null) {
+                throw new IllegalArgumentException("Product requires a supplier e-mail");
             }
         }
 

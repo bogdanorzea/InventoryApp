@@ -5,6 +5,7 @@ import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -17,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +32,9 @@ public class ProductEditorActivity extends AppCompatActivity {
     private EditText descriptionEditText;
     private TextView quantityTextView;
     private EditText priceEditText;
+    private EditText supplierEditText;
+    private EditText supplierEmailEditText;
+    private Button orderButton;
 
     // Touch listener for the changes to the product
     private boolean mChanged = false;
@@ -48,9 +53,13 @@ public class ProductEditorActivity extends AppCompatActivity {
             // Projection for Cursor
             String[] projection = new String[]{
                     InventoryEntry.COLUMN_PRODUCT_NAME,
+                    InventoryEntry.COLUMN_PHOTO,
                     InventoryEntry.COLUMN_DESCRIPTION,
                     InventoryEntry.COLUMN_QUANTITY,
                     InventoryEntry.COLUMN_PRICE,
+                    InventoryEntry.COLUMN_PHOTO,
+                    InventoryEntry.COLUMN_SUPPLIER,
+                    InventoryEntry.COLUMN_SUPPLIER_EMAIL
             };
 
             // Return a Cursor for the data to be displayed
@@ -64,6 +73,10 @@ public class ProductEditorActivity extends AppCompatActivity {
             int descriptionColumnIndex = data.getColumnIndex(InventoryEntry.COLUMN_DESCRIPTION);
             int quantityColumnIndex = data.getColumnIndex(InventoryEntry.COLUMN_QUANTITY);
             int priceColumnIndex = data.getColumnIndex(InventoryEntry.COLUMN_PRICE);
+            int photoColumnIndex = data.getColumnIndex(InventoryEntry.COLUMN_PHOTO);
+            int supplierColumnIndex = data.getColumnIndex(InventoryEntry.COLUMN_SUPPLIER);
+            int supplierEmailColumnIndex = data.getColumnIndex(InventoryEntry.COLUMN_SUPPLIER_EMAIL);
+
 
             if (data.moveToFirst()) {
                 // Get data from cursor
@@ -71,12 +84,17 @@ public class ProductEditorActivity extends AppCompatActivity {
                 String description = data.getString(descriptionColumnIndex);
                 int quantity = data.getInt(quantityColumnIndex);
                 double price = data.getDouble(priceColumnIndex);
+                String supplier = data.getString(supplierColumnIndex);
+                String supplierEmail = data.getString(supplierEmailColumnIndex);
+
 
                 // Set data to the corresponding EditText
                 nameEditText.setText(name);
                 descriptionEditText.setText(description);
                 quantityTextView.setText(Integer.toString(quantity));
                 priceEditText.setText(Double.toString(price));
+                supplierEditText.setText(supplier);
+                supplierEmailEditText.setText(supplierEmail);
             }
         }
 
@@ -87,6 +105,8 @@ public class ProductEditorActivity extends AppCompatActivity {
             descriptionEditText.setText("");
             quantityTextView.setText("");
             priceEditText.setText("");
+            supplierEditText.setText("");
+            supplierEmailEditText.setText("");
         }
     };
 
@@ -176,6 +196,96 @@ public class ProductEditorActivity extends AppCompatActivity {
         descriptionEditText = (EditText) findViewById(R.id.edit_description);
         descriptionEditText.setOnTouchListener(mTouchListener);
 
+        // Supplier
+        supplierEditText = (EditText) findViewById(R.id.edit_supplier);
+        supplierEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(supplierEditText.getText().toString().trim())) {
+                    supplierEditText.setError(getString(R.string.editor_supplier_required));
+                } else {
+                    supplierEditText.setError(null);
+                }
+            }
+        });
+        supplierEditText.setOnTouchListener(mTouchListener);
+
+        // Supplier e-mail
+        supplierEmailEditText = (EditText) findViewById(R.id.edit_supplier_email);
+        supplierEmailEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(supplierEmailEditText.getText().toString().trim())) {
+                    supplierEmailEditText.setError(getString(R.string.editor_supplier_email_required));
+                } else if(!validEmail(supplierEmailEditText.getText().toString().trim())){
+                    supplierEmailEditText.setError(getString(R.string.editor_supplier_email_invalid));
+                }
+                else {
+                    supplierEditText.setError(null);
+                }
+            }
+
+            boolean validEmail(String email){
+                String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
+                java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
+                java.util.regex.Matcher m = p.matcher(email);
+                return m.matches();
+            }
+        });
+        supplierEmailEditText.setOnTouchListener(mTouchListener);
+
+        // Order button
+        orderButton = (Button) findViewById(R.id.order_button);
+        orderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (supplierEmailEditText.getError() == null && supplierEditText.getError() == null && nameEditText.getError() == null) {
+                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                    emailIntent.setType("text/plain");
+                    emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{supplierEmailEditText.getText().toString()});
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Order request");
+
+                    StringBuilder emailBody = new StringBuilder();
+                    emailBody.append("Hello ");
+                    emailBody.append(supplierEditText.getText().toString());
+                    emailBody.append(",");
+                    emailBody.append('\n');
+                    emailBody.append('\n');
+                    emailBody.append("I would like to place an order for your product: ");
+                    emailBody.append(nameEditText.getText().toString());
+                    emailBody.append(".");
+
+                    emailIntent.putExtra(Intent.EXTRA_TEXT, emailBody.toString());
+                    try {
+                        startActivity(Intent.createChooser(emailIntent, "Send e-mail..."));
+                    } catch (android.content.ActivityNotFoundException ex) {
+                        Toast.makeText(v.getContext(), "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(v.getContext(), "Please input valid supplier e-mail address", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         // Check if the Editor was started with an Uri intent
         mCurrentUri = getIntent().getData();
@@ -319,9 +429,12 @@ public class ProductEditorActivity extends AppCompatActivity {
         String descriptionString = descriptionEditText.getText().toString().trim();
         String quantityString = quantityTextView.getText().toString().trim();
         String priceString = priceEditText.getText().toString().trim();
+        String supplierString = supplierEditText.getText().toString().trim();
+        String supplierEmailString = supplierEmailEditText.getText().toString().trim();
 
         // Prevent adding products that do not have a valid name, quantity or price
-        if (TextUtils.isEmpty(nameString) || TextUtils.isEmpty(quantityString) || TextUtils.isEmpty(priceString)) {
+        if (TextUtils.isEmpty(nameString) || TextUtils.isEmpty(quantityString) || TextUtils.isEmpty(priceString) ||
+                TextUtils.isEmpty(supplierString) || TextUtils.isEmpty(supplierEmailString)) {
             Toast.makeText(this, R.string.editor_insert_incomplete, Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -342,6 +455,8 @@ public class ProductEditorActivity extends AppCompatActivity {
         values.put(InventoryEntry.COLUMN_DESCRIPTION, descriptionString);
         values.put(InventoryEntry.COLUMN_QUANTITY, quantity);
         values.put(InventoryEntry.COLUMN_PRICE, price);
+        values.put(InventoryEntry.COLUMN_SUPPLIER, supplierString);
+        values.put(InventoryEntry.COLUMN_SUPPLIER_EMAIL, supplierEmailString);
 
         if (mCurrentUri == null) {
             // Insert the new row, returning the URI of the new row

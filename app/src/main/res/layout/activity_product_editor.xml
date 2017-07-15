@@ -1,76 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="16dp"
-    android:orientation="vertical"
-    tools:context="com.bogdanorzea.inventoryapp.ProductEditorActivity">
+    android:layout_height="match_parent">
 
-    <TextView
-        style="@style/editor_text_view"
-        android:layout_marginTop="0dp"
-        android:text="@string/editor_product_name" />
-
-    <EditText
-        android:id="@+id/edit_name"
-        style="@style/editor_edit_text"
-        android:inputType="textCapSentences"
-        android:maxLines="1" />
-
-    <TextView
-        style="@style/editor_text_view"
-        android:text="@string/editor_product_price" />
-
-    <EditText
-        android:id="@+id/edit_price"
-        style="@style/editor_edit_text"
-        android:inputType="numberDecimal"
-        android:textColor="@color/colorPrimaryText" />
-
-    <TextView
-        style="@style/editor_text_view"
-        android:text="@string/editor_product_quantity" />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/decrease_quantity_button"
-            style="@style/editor_button"
-            android:layout_marginEnd="4dp"
-            android:layout_marginRight="4dp"
-            android:text="-" />
-
+        android:orientation="vertical"
+        android:padding="16dp"
+        tools:context="com.bogdanorzea.inventoryapp.ProductEditorActivity">
+        <!--PRODUCT NAME-->
         <TextView
-            android:id="@+id/edit_quantity"
-            android:layout_width="48dp"
+            style="@style/editor_text_view"
+            android:layout_marginTop="0dp"
+            android:text="@string/editor_product_name" />
+
+        <EditText
+            android:id="@+id/edit_name"
+            style="@style/editor_edit_text"
+            android:inputType="textCapSentences"
+            android:maxLines="1" />
+
+        <!--PRODUCT PRICE-->
+        <TextView
+            style="@style/editor_text_view"
+            android:text="@string/editor_product_price" />
+
+        <EditText
+            android:id="@+id/edit_price"
+            style="@style/editor_edit_text"
+            android:inputType="numberDecimal"
+            android:textColor="@color/colorPrimaryText" />
+
+        <!--PRODUCT QUANTITY-->
+        <TextView
+            style="@style/editor_text_view"
+            android:text="@string/editor_product_quantity" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:gravity="center"
-            android:text="0"
-            android:textColor="@color/colorPrimaryText"
-            android:textSize="24sp" />
+            android:orientation="horizontal">
 
+            <Button
+                android:id="@+id/decrease_quantity_button"
+                style="@style/editor_button"
+                android:layout_marginEnd="4dp"
+                android:layout_marginRight="4dp"
+                android:text="-" />
+
+            <TextView
+                android:id="@+id/edit_quantity"
+                android:layout_width="48dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:text="0"
+                android:textColor="@color/colorPrimaryText"
+                android:textSize="24sp" />
+
+            <Button
+                android:id="@+id/increase_quantity_button"
+                style="@style/editor_button"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:text="+" />
+        </LinearLayout>
+
+        <!--PRODUCT DESCRIPTION-->
+        <TextView
+            style="@style/editor_text_view"
+            android:text="@string/editor_product_description" />
+
+        <EditText
+            android:id="@+id/edit_description"
+            style="@style/editor_edit_text"
+            android:inputType="textCapSentences"
+            android:maxLines="1" />
+
+        <!--PRODUCT PHOTO-->
+        <TextView
+            style="@style/editor_text_view"
+            android:text="@string/editor_product_photo" />
+        <!--TODO Add image to product-->
+
+        <!--SUPPLIER NAME-->
+        <TextView
+            style="@style/editor_text_view"
+            android:text="@string/editor_product_supplier" />
+
+        <EditText
+            android:id="@+id/edit_supplier"
+            style="@style/editor_edit_text"
+            android:inputType="textCapSentences"
+            android:maxLines="1" />
+
+        <!--SUPPLIER E-MAIL-->
+        <TextView
+            style="@style/editor_text_view"
+            android:text="@string/editor_product_supplier_email" />
+
+        <EditText
+            android:id="@+id/edit_supplier_email"
+            style="@style/editor_edit_text"
+            android:inputType="textEmailAddress"
+            android:maxLines="1" />
+
+        <!--ORDER BUTTON-->
         <Button
-            android:id="@+id/increase_quantity_button"
-            style="@style/editor_button"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:text="+" />
+            android:id="@+id/order_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:padding="18dp"
+            android:text="@string/order_product"
+            android:textColor="@color/colorPrimaryText"
+            android:textSize="18sp" />
     </LinearLayout>
-
-    <TextView
-        style="@style/editor_text_view"
-        android:text="@string/editor_product_description" />
-
-    <EditText
-        android:id="@+id/edit_description"
-        style="@style/editor_edit_text"
-        android:inputType="textCapSentences"
-        android:maxLines="1" />
-    <!--TODO Button to order from supplier-->
-    <!--TODO Add image to product-->
-</LinearLayout>
+</ScrollView>
