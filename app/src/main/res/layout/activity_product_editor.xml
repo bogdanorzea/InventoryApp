@@ -7,7 +7,6 @@
     android:orientation="vertical"
     tools:context="com.bogdanorzea.inventoryapp.ProductEditorActivity">
 
-    <!--TODO Add better validation to inputs using Hints and Errors-->
     <TextView
         style="@style/editor_text_view"
         android:layout_marginTop="0dp"

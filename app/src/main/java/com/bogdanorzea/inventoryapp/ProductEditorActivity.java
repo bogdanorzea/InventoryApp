@@ -10,11 +10,13 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,8 +28,18 @@ public class ProductEditorActivity extends AppCompatActivity {
 
     private EditText nameEditText;
     private EditText descriptionEditText;
-    private TextView quantityEditText;
+    private TextView quantityTextView;
     private EditText priceEditText;
+
+    // Touch listener for the changes to the product
+    private boolean mChanged = false;
+    private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            mChanged = true;
+            return false;
+        }
+    };
 
     // Loader to fill the EditText fields
     private LoaderManager.LoaderCallbacks<Cursor> mLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
@@ -63,7 +75,7 @@ public class ProductEditorActivity extends AppCompatActivity {
                 // Set data to the corresponding EditText
                 nameEditText.setText(name);
                 descriptionEditText.setText(description);
-                quantityEditText.setText(Integer.toString(quantity));
+                quantityTextView.setText(Integer.toString(quantity));
                 priceEditText.setText(Double.toString(price));
             }
         }
@@ -73,7 +85,7 @@ public class ProductEditorActivity extends AppCompatActivity {
             // Clear the EditText inputs
             nameEditText.setText("");
             descriptionEditText.setText("");
-            quantityEditText.setText("");
+            quantityTextView.setText("");
             priceEditText.setText("");
         }
     };
@@ -83,42 +95,90 @@ public class ProductEditorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_editor);
 
-        mCurrentUri = getIntent().getData();
-
+        // Name
         nameEditText = (EditText) findViewById(R.id.edit_name);
-        descriptionEditText = (EditText) findViewById(R.id.edit_description);
-        quantityEditText = (TextView) findViewById(R.id.edit_quantity);
-        priceEditText = (EditText) findViewById(R.id.edit_price);
+        nameEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-        // Set onClickListener for buttons decreasing/increasing quantity
-        Button decreaseQuantity = (Button) findViewById(R.id.decrease_quantity_button);
-        decreaseQuantity.setOnClickListener(new View.OnClickListener() {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(nameEditText.getText().toString().trim())) {
+                    nameEditText.setError(getString(R.string.editor_name_required));
+                } else {
+                    nameEditText.setError(null);
+                }
+            }
+        });
+        nameEditText.setOnTouchListener(mTouchListener);
+
+        // Price
+        priceEditText = (EditText) findViewById(R.id.edit_price);
+        priceEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(priceEditText.getText().toString().trim())) {
+                    priceEditText.setError(getString(R.string.editor_price_required));
+                } else {
+                    priceEditText.setError(null);
+                }
+            }
+        });
+        priceEditText.setOnTouchListener(mTouchListener);
+
+        // Quantity
+        quantityTextView = (TextView) findViewById(R.id.edit_quantity);
+        findViewById(R.id.decrease_quantity_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String currentQuantityString = quantityEditText.getText().toString();
+                mChanged = true;
+                String currentQuantityString = quantityTextView.getText().toString();
                 int currentQuantity = Integer.parseInt(currentQuantityString);
                 if (currentQuantity > 0) {
-                    quantityEditText.setText(Integer.toString(currentQuantity - 1));
+                    quantityTextView.setText(Integer.toString(currentQuantity - 1));
                 } else {
                     Toast.makeText(ProductEditorActivity.this, R.string.quantity_negative_error, Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
-        Button increaseQuantity = (Button) findViewById(R.id.increase_quantity_button);
-        increaseQuantity.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.increase_quantity_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String currentQuantityString = quantityEditText.getText().toString();
+                mChanged = true;
+                String currentQuantityString = quantityTextView.getText().toString();
                 int currentQuantity = Integer.parseInt(currentQuantityString);
                 if (currentQuantity < 999) {
-                    quantityEditText.setText(Integer.toString(currentQuantity + 1));
+                    quantityTextView.setText(Integer.toString(currentQuantity + 1));
                 } else {
                     Toast.makeText(ProductEditorActivity.this, R.string.quantity_maximum_error, Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
+        // Description
+        descriptionEditText = (EditText) findViewById(R.id.edit_description);
+        descriptionEditText.setOnTouchListener(mTouchListener);
+
+
+        // Check if the Editor was started with an Uri intent
+        mCurrentUri = getIntent().getData();
         if (mCurrentUri != null) {
             setTitle(getString(R.string.editor_title_edit));
             getLoaderManager().initLoader(0, null, mLoaderCallbacks);
@@ -147,9 +207,13 @@ public class ProductEditorActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        // TODO Confirm discard dialog
-        exitActivityWithAnimation();
+        // Confirm discard changes dialog if product was modified
+        if (mChanged) {
+            askDiscardChanges();
+        } else {
+            super.onBackPressed();
+            exitActivityWithAnimation();
+        }
     }
 
     /**
@@ -164,19 +228,27 @@ public class ProductEditorActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_insert:
-                insertProduct();
-                exitActivityWithAnimation();
+                if (insertProduct()) {
+                    exitActivityWithAnimation();
+                }
                 return true;
             case R.id.action_delete:
                 askDeleteProduct();
                 return true;
             case android.R.id.home:
-                exitActivityWithAnimation();
+                if (mChanged) {
+                    askDiscardChanges();
+                } else {
+                    exitActivityWithAnimation();
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Prompts user to confirm delete action
+     */
     private void askDeleteProduct() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.delete_message);
@@ -186,6 +258,34 @@ public class ProductEditorActivity extends AppCompatActivity {
                 if (dialog != null) {
                     deleteProduct();
                     finish();
+                }
+            }
+        });
+        builder.setNegativeButton(R.string.alert_no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // The user dismissed the dialog
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        // Create and show the AlertDialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    /**
+     * Prompts user to confirm discarding changes
+     */
+    private void askDiscardChanges() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.discard_message);
+        builder.setPositiveButton(R.string.alert_yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User confirmed product update
+                if (dialog != null) {
+                    exitActivityWithAnimation();
                 }
             }
         });
@@ -213,17 +313,17 @@ public class ProductEditorActivity extends AppCompatActivity {
         }
     }
 
-    private void insertProduct() {
+    private boolean insertProduct() {
         // Get the strings from EditTexts
         String nameString = nameEditText.getText().toString().trim();
         String descriptionString = descriptionEditText.getText().toString().trim();
-        String quantityString = quantityEditText.getText().toString().trim();
+        String quantityString = quantityTextView.getText().toString().trim();
         String priceString = priceEditText.getText().toString().trim();
 
         // Prevent adding products that do not have a valid name, quantity or price
         if (TextUtils.isEmpty(nameString) || TextUtils.isEmpty(quantityString) || TextUtils.isEmpty(priceString)) {
             Toast.makeText(this, R.string.editor_insert_incomplete, Toast.LENGTH_SHORT).show();
-            return;
+            return false;
         }
 
         // Convert Strings to the corresponding data types for price and quantity
@@ -264,5 +364,7 @@ public class ProductEditorActivity extends AppCompatActivity {
                 Toast.makeText(this, R.string.editor_update_error, Toast.LENGTH_SHORT).show();
             }
         }
+
+        return true;
     }
 }

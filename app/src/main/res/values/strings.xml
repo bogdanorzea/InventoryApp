@@ -26,7 +26,7 @@
     <string name="editor_insert_error">Error inserting product</string>
     <string name="editor_delete_failed">Failed to delete product</string>
     <string name="editor_delete_successful">Product successfully deleted</string>
-    <string name="editor_insert_incomplete">Incomplete product information.\nA product requires a name, quantity and price.</string>
+    <string name="editor_insert_incomplete">Incomplete product information</string>
     <string name="editor_update_successfully">Product update successfully</string>
     <string name="editor_update_error">Failed to update product</string>
     <string name="editor_title_edit">Edit product</string>
@@ -36,4 +36,7 @@
     <string name="alert_no">No</string>
     <string name="quantity_negative_error">Cannot have negative quantity</string>
     <string name="quantity_maximum_error">Maximum value for quantity reached</string>
+    <string name="editor_name_required">Name required</string>
+    <string name="editor_price_required">Price required</string>
+    <string name="discard_message">Do you want to discard changes?</string>
 </resources>
