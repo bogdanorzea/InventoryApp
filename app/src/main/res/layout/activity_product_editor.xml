@@ -7,46 +7,69 @@
     android:orientation="vertical"
     tools:context="com.bogdanorzea.inventoryapp.ProductEditorActivity">
 
+    <!--TODO Add better validation to inputs using Hints and Errors-->
     <TextView
-        style="@style/editor_fields_description"
+        style="@style/editor_text_view"
+        android:layout_marginTop="0dp"
         android:text="@string/editor_product_name" />
 
     <EditText
         android:id="@+id/edit_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/editor_edit_text"
         android:inputType="textCapSentences"
         android:maxLines="1" />
 
     <TextView
-        style="@style/editor_fields_description"
+        style="@style/editor_text_view"
         android:text="@string/editor_product_price" />
 
     <EditText
         android:id="@+id/edit_price"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="numberDecimal" />
+        style="@style/editor_edit_text"
+        android:inputType="numberDecimal"
+        android:textColor="@color/colorPrimaryText" />
 
     <TextView
-        style="@style/editor_fields_description"
+        style="@style/editor_text_view"
         android:text="@string/editor_product_quantity" />
 
-    <EditText
-        android:id="@+id/edit_quantity"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="number" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/decrease_quantity_button"
+            style="@style/editor_button"
+            android:layout_marginRight="4dp"
+            android:text="-" />
+
+        <TextView
+            android:id="@+id/edit_quantity"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:text="0"
+            android:textColor="@color/colorPrimaryText"
+            android:textSize="24sp" />
+
+        <Button
+            android:id="@+id/increase_quantity_button"
+            style="@style/editor_button"
+            android:layout_marginLeft="4dp"
+            android:text="+" />
+    </LinearLayout>
 
     <TextView
-        style="@style/editor_fields_description"
+        style="@style/editor_text_view"
         android:text="@string/editor_product_description" />
 
     <EditText
         android:id="@+id/edit_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/editor_edit_text"
         android:inputType="textCapSentences"
         android:maxLines="1" />
-
+    <!--TODO Button to order from supplier-->
+    <!--TODO Add image to product-->
 </LinearLayout>

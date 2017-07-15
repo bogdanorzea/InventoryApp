@@ -13,7 +13,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bogdanorzea.inventoryapp.data.InventoryContract.InventoryEntry;
@@ -23,7 +26,7 @@ public class ProductEditorActivity extends AppCompatActivity {
 
     private EditText nameEditText;
     private EditText descriptionEditText;
-    private EditText quantityEditText;
+    private TextView quantityEditText;
     private EditText priceEditText;
 
     // Loader to fill the EditText fields
@@ -84,8 +87,37 @@ public class ProductEditorActivity extends AppCompatActivity {
 
         nameEditText = (EditText) findViewById(R.id.edit_name);
         descriptionEditText = (EditText) findViewById(R.id.edit_description);
-        quantityEditText = (EditText) findViewById(R.id.edit_quantity);
+        quantityEditText = (TextView) findViewById(R.id.edit_quantity);
         priceEditText = (EditText) findViewById(R.id.edit_price);
+
+        // Set onClickListener for buttons decreasing/increasing quantity
+        Button decreaseQuantity = (Button) findViewById(R.id.decrease_quantity_button);
+        decreaseQuantity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String currentQuantityString = quantityEditText.getText().toString();
+                int currentQuantity = Integer.parseInt(currentQuantityString);
+                if (currentQuantity > 0) {
+                    quantityEditText.setText(Integer.toString(currentQuantity - 1));
+                } else {
+                    Toast.makeText(ProductEditorActivity.this, R.string.quantity_negative_error, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        Button increaseQuantity = (Button) findViewById(R.id.increase_quantity_button);
+        increaseQuantity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String currentQuantityString = quantityEditText.getText().toString();
+                int currentQuantity = Integer.parseInt(currentQuantityString);
+                if (currentQuantity < 999) {
+                    quantityEditText.setText(Integer.toString(currentQuantity + 1));
+                } else {
+                    Toast.makeText(ProductEditorActivity.this, R.string.quantity_maximum_error, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         if (mCurrentUri != null) {
             setTitle(getString(R.string.editor_title_edit));
@@ -116,6 +148,7 @@ public class ProductEditorActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        // TODO Confirm discard dialog
         exitActivityWithAnimation();
     }
 
