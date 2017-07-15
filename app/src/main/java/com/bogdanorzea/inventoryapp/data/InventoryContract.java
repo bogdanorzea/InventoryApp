@@ -12,7 +12,7 @@ public class InventoryContract {
     private InventoryContract() {
     }
 
-    public static class InventoryEntry implements BaseColumns {
+    public static class ProductEntry implements BaseColumns {
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_PRODUCTS);
 
         // MIME Type Reference
@@ -35,7 +35,7 @@ public class InventoryContract {
 
         // DELETE TABLE statement
         public static final String SQL_DELETE_ENTRIES =
-                "DROP TABLE IF EXISTS " + InventoryEntry.TABLE_NAME;
+                "DROP TABLE IF EXISTS " + ProductEntry.TABLE_NAME;
 
         // Data types
         static final String TEXT_DATA_TYPE = " TEXT";
@@ -48,15 +48,14 @@ public class InventoryContract {
 
         // CREATE TABLE statement
         public static final String SQL_CREATE_ENTRIES =
-                "CREATE TABLE " + InventoryEntry.TABLE_NAME + " (" +
-                        InventoryEntry._ID + INTEGER_DATA_TYPE + PRIMARY_KEY + SEPARATOR +
-                        InventoryEntry.COLUMN_PRODUCT_NAME + TEXT_DATA_TYPE + NOT_NULL + SEPARATOR +
-                        InventoryEntry.COLUMN_DESCRIPTION + TEXT_DATA_TYPE + SEPARATOR +
-                        InventoryEntry.COLUMN_QUANTITY + INTEGER_DATA_TYPE + NOT_NULL + SEPARATOR +
-                        InventoryEntry.COLUMN_PRICE + REAL_DATA_TYPE + NOT_NULL + SEPARATOR +
-                        InventoryEntry.COLUMN_IMAGE + BLOB_DATA_TYPE + SEPARATOR +
-                        InventoryEntry.COLUMN_SUPPLIER + TEXT_DATA_TYPE + NOT_NULL + SEPARATOR +
-                        InventoryEntry.COLUMN_SUPPLIER_EMAIL + TEXT_DATA_TYPE + NOT_NULL +")";
+                "CREATE TABLE " + ProductEntry.TABLE_NAME + " (" +
+                        ProductEntry._ID + INTEGER_DATA_TYPE + PRIMARY_KEY + SEPARATOR +
+                        ProductEntry.COLUMN_PRODUCT_NAME + TEXT_DATA_TYPE + NOT_NULL + SEPARATOR +
+                        ProductEntry.COLUMN_DESCRIPTION + TEXT_DATA_TYPE + SEPARATOR +
+                        ProductEntry.COLUMN_QUANTITY + INTEGER_DATA_TYPE + NOT_NULL + SEPARATOR +
+                        ProductEntry.COLUMN_PRICE + REAL_DATA_TYPE + NOT_NULL + SEPARATOR +
+                        ProductEntry.COLUMN_IMAGE + BLOB_DATA_TYPE + SEPARATOR +
+                        ProductEntry.COLUMN_SUPPLIER + TEXT_DATA_TYPE + NOT_NULL + SEPARATOR +
+                        ProductEntry.COLUMN_SUPPLIER_EMAIL + TEXT_DATA_TYPE + NOT_NULL +")";
     }
-
 }

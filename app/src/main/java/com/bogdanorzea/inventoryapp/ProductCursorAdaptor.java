@@ -13,8 +13,7 @@ import android.widget.CursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bogdanorzea.inventoryapp.data.InventoryContract;
-import com.bogdanorzea.inventoryapp.data.InventoryContract.InventoryEntry;
+import com.bogdanorzea.inventoryapp.data.InventoryContract.ProductEntry;
 
 class ProductCursorAdaptor extends CursorAdapter {
     private final LayoutInflater inflater;
@@ -38,10 +37,10 @@ class ProductCursorAdaptor extends CursorAdapter {
         TextView quantityTextView = (TextView) view.findViewById(R.id.quantity);
 
         // Get the cursor column names
-        int idColumnIndex = cursor.getColumnIndex(InventoryEntry._ID);
-        int nameColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_PRODUCT_NAME);
-        int priceColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_PRICE);
-        int quantityColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_QUANTITY);
+        int idColumnIndex = cursor.getColumnIndex(ProductEntry._ID);
+        int nameColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_NAME);
+        int priceColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRICE);
+        int quantityColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_QUANTITY);
 
         // Add information to views
         final int productId = cursor.getInt(idColumnIndex);
@@ -57,11 +56,11 @@ class ProductCursorAdaptor extends CursorAdapter {
             public void onClick(View v) {
                 if (productQuantity > 0) {
                     // Create Uri for this product
-                    Uri uri = ContentUris.withAppendedId(InventoryContract.InventoryEntry.CONTENT_URI, productId);
+                    Uri uri = ContentUris.withAppendedId(ProductEntry.CONTENT_URI, productId);
 
                     // Add new quantity for product
                     ContentValues values = new ContentValues();
-                    values.put(InventoryContract.InventoryEntry.COLUMN_QUANTITY, productQuantity - 1);
+                    values.put(ProductEntry.COLUMN_QUANTITY, productQuantity - 1);
 
                     // Update the quantity
                     int updatedRows = context.getContentResolver().update(uri, values, null, null);

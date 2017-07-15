@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
 
-import com.bogdanorzea.inventoryapp.data.InventoryContract.InventoryEntry;
+import com.bogdanorzea.inventoryapp.data.InventoryContract.ProductEntry;
 
 /**
  * ContentProvider for Inventory database
@@ -57,19 +57,19 @@ public class InventoryProvider extends ContentProvider {
         Cursor cursor;
         switch (match) {
             case PRODUCTS:
-                cursor = db.query(InventoryEntry.TABLE_NAME, projection, selection, selectionArgs,
+                cursor = db.query(ProductEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
             case PRODUCT_ID:
                 // For the PRODUCT_ID code, extract out the ID from the URI.
-                selection = InventoryEntry._ID + "=?";
+                selection = ProductEntry._ID + "=?";
 
                 // For every "?" in the selection, we need to have an element in the selection
                 // arguments that will fill in the "?". Since we have 1 question mark in the
                 // selection, we have 1 String in the selection arguments' String array.
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
 
-                cursor = db.query(InventoryEntry.TABLE_NAME, projection, selection, selectionArgs,
+                cursor = db.query(ProductEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
             default:
@@ -92,9 +92,9 @@ public class InventoryProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case PRODUCTS:
-                return InventoryEntry.CONTENT_LIST_TYPE;
+                return ProductEntry.CONTENT_LIST_TYPE;
             case PRODUCT_ID:
-                return InventoryEntry.CONTENT_ITEM_TYPE;
+                return ProductEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalStateException("Unknown URI " + uri + " with match " + match);
         }
@@ -113,7 +113,7 @@ public class InventoryProvider extends ContentProvider {
 
     private Uri insertProduct(Uri uri, ContentValues values) {
         // Check that the name is not null
-        String name = values.getAsString(InventoryEntry.COLUMN_PRODUCT_NAME);
+        String name = values.getAsString(ProductEntry.COLUMN_PRODUCT_NAME);
         if (name == null) {
             throw new IllegalArgumentException("Product requires a name");
         }
@@ -121,13 +121,13 @@ public class InventoryProvider extends ContentProvider {
         // No need to check the description, any value is valid (including null).
 
         // Check that the price is not null and positive
-        Double price = values.getAsDouble(InventoryEntry.COLUMN_PRICE);
+        Double price = values.getAsDouble(ProductEntry.COLUMN_PRICE);
         if (price == null || price < 0) {
             throw new IllegalArgumentException("Invalid product price");
         }
 
         // Check that the quantity is not null and positive
-        Integer quantity = values.getAsInteger(InventoryEntry.COLUMN_QUANTITY);
+        Integer quantity = values.getAsInteger(ProductEntry.COLUMN_QUANTITY);
         if (quantity == null || quantity < 0) {
             throw new IllegalArgumentException("Invalid product quantity");
         }
@@ -135,13 +135,13 @@ public class InventoryProvider extends ContentProvider {
         // No need to check the photo, any value is valid (including null).
 
         // Check that the supplier is not null
-        String supplier = values.getAsString(InventoryEntry.COLUMN_SUPPLIER);
+        String supplier = values.getAsString(ProductEntry.COLUMN_SUPPLIER);
         if (supplier == null) {
             throw new IllegalArgumentException("Product requires a supplier name");
         }
 
         // Check that the supplier is not null
-        String supplierEmail = values.getAsString(InventoryEntry.COLUMN_SUPPLIER_EMAIL);
+        String supplierEmail = values.getAsString(ProductEntry.COLUMN_SUPPLIER_EMAIL);
         if (supplierEmail == null) {
             throw new IllegalArgumentException("Product requires a supplier e-mail");
         }
@@ -150,7 +150,7 @@ public class InventoryProvider extends ContentProvider {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         // Insert a new product into the products database table with the given ContentValues
-        long id = db.insert(InventoryEntry.TABLE_NAME, null, values);
+        long id = db.insert(ProductEntry.TABLE_NAME, null, values);
 
         // If the ID is -1, then the insertion failed. Log an error and return null.
         if (id == -1) {
@@ -175,13 +175,13 @@ public class InventoryProvider extends ContentProvider {
         switch (match) {
             case PRODUCTS:
                 // Delete all rows that match the selection and selection args
-                rowsDeleted = database.delete(InventoryEntry.TABLE_NAME, selection, selectionArgs);
+                rowsDeleted = database.delete(ProductEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             case PRODUCT_ID:
                 // Delete a single row given by the ID in the URI
-                selection = InventoryEntry._ID + "=?";
+                selection = ProductEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
-                rowsDeleted = database.delete(InventoryEntry.TABLE_NAME, selection, selectionArgs);
+                rowsDeleted = database.delete(ProductEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             default:
                 throw new IllegalStateException("Deletion is not supported for " + uri);
@@ -204,7 +204,7 @@ public class InventoryProvider extends ContentProvider {
                 return updateProducts(uri, values, selection, selectionArgs);
             case PRODUCT_ID:
                 // Update a single row given by the ID in the URI
-                selection = InventoryEntry._ID + "=?";
+                selection = ProductEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 return updateProducts(uri, values, selection, selectionArgs);
             default:
@@ -214,40 +214,40 @@ public class InventoryProvider extends ContentProvider {
 
     private int updateProducts(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         // If the COLUMN_PRODUCT_NAME key is present, check that the name value is not null.
-        if (values.containsKey(InventoryEntry.COLUMN_PRODUCT_NAME)) {
-            String name = values.getAsString(InventoryEntry.COLUMN_PRODUCT_NAME);
+        if (values.containsKey(ProductEntry.COLUMN_PRODUCT_NAME)) {
+            String name = values.getAsString(ProductEntry.COLUMN_PRODUCT_NAME);
             if (name == null) {
                 throw new IllegalArgumentException("Product requires a name");
             }
         }
 
         // If the COLUMN_PRICE key is present, check that the value is not null and positive.
-        if (values.containsKey(InventoryEntry.COLUMN_PRICE)) {
-            Double price = values.getAsDouble(InventoryEntry.COLUMN_PRICE);
+        if (values.containsKey(ProductEntry.COLUMN_PRICE)) {
+            Double price = values.getAsDouble(ProductEntry.COLUMN_PRICE);
             if (price == null || price < 0) {
                 throw new IllegalArgumentException("Invalid product price");
             }
         }
 
         // If the COLUMN_PRICE key is present, check that the value is not null and positive.
-        if (values.containsKey(InventoryEntry.COLUMN_QUANTITY)) {
-            Integer quantity = values.getAsInteger(InventoryEntry.COLUMN_QUANTITY);
+        if (values.containsKey(ProductEntry.COLUMN_QUANTITY)) {
+            Integer quantity = values.getAsInteger(ProductEntry.COLUMN_QUANTITY);
             if (quantity == null || quantity < 0) {
                 throw new IllegalArgumentException("Invalid product quantity");
             }
         }
 
         // If the COLUMN_SUPPLIER key is present, check that the supplier is not null
-        if (values.containsKey(InventoryEntry.COLUMN_SUPPLIER)) {
-            String supplier = values.getAsString(InventoryEntry.COLUMN_SUPPLIER);
+        if (values.containsKey(ProductEntry.COLUMN_SUPPLIER)) {
+            String supplier = values.getAsString(ProductEntry.COLUMN_SUPPLIER);
             if (supplier == null) {
                 throw new IllegalArgumentException("Product requires a supplier name");
             }
         }
 
         // If the COLUMN_SUPPLIER_EMAIL key is present, check that the email is not null
-        if (values.containsKey(InventoryEntry.COLUMN_SUPPLIER_EMAIL)) {
-            String supplierEmail = values.getAsString(InventoryEntry.COLUMN_SUPPLIER_EMAIL);
+        if (values.containsKey(ProductEntry.COLUMN_SUPPLIER_EMAIL)) {
+            String supplierEmail = values.getAsString(ProductEntry.COLUMN_SUPPLIER_EMAIL);
             if (supplierEmail == null) {
                 throw new IllegalArgumentException("Product requires a supplier e-mail");
             }
@@ -257,7 +257,7 @@ public class InventoryProvider extends ContentProvider {
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
 
         // Update a product into the database with the given content values
-        int count = database.update(InventoryEntry.TABLE_NAME, values, selection, selectionArgs);
+        int count = database.update(ProductEntry.TABLE_NAME, values, selection, selectionArgs);
 
         if (count != 0) {
             getContext().getContentResolver().notifyChange(uri, null);

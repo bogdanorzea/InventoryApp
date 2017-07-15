@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.bogdanorzea.inventoryapp.data.InventoryContract.InventoryEntry;
+import com.bogdanorzea.inventoryapp.data.InventoryContract.ProductEntry;
 
 public class InventoryDbHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
@@ -16,12 +16,12 @@ public class InventoryDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(InventoryEntry.SQL_CREATE_ENTRIES);
+        db.execSQL(ProductEntry.SQL_CREATE_ENTRIES);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(InventoryEntry.SQL_DELETE_ENTRIES);
+        db.execSQL(ProductEntry.SQL_DELETE_ENTRIES);
         onCreate(db);
     }
 }

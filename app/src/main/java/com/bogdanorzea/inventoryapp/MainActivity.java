@@ -20,7 +20,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bogdanorzea.inventoryapp.data.InventoryContract.InventoryEntry;
+import com.bogdanorzea.inventoryapp.data.InventoryContract.ProductEntry;
 
 public class MainActivity extends AppCompatActivity {
     private ProductCursorAdaptor mProductCursorAdaptor;
@@ -29,14 +29,14 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             String[] projection = {
-                    InventoryEntry._ID,
-                    InventoryEntry.COLUMN_PRODUCT_NAME,
-                    InventoryEntry.COLUMN_PRICE,
-                    InventoryEntry.COLUMN_QUANTITY
+                    ProductEntry._ID,
+                    ProductEntry.COLUMN_PRODUCT_NAME,
+                    ProductEntry.COLUMN_PRICE,
+                    ProductEntry.COLUMN_QUANTITY
             };
 
             // Return a CursorLoader that will take care of creating a Cursor for the data being displayed.
-            return new CursorLoader(getBaseContext(), InventoryEntry.CONTENT_URI, projection, null, null, null);
+            return new CursorLoader(getBaseContext(), ProductEntry.CONTENT_URI, projection, null, null, null);
         }
 
         @Override
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent editIntent = new Intent(getBaseContext(), ProductEditorActivity.class);
 
-                Uri data = ContentUris.withAppendedId(InventoryEntry.CONTENT_URI, id);
+                Uri data = ContentUris.withAppendedId(ProductEntry.CONTENT_URI, id);
                 editIntent.setData(data);
 
                 startActivity(editIntent);
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.show();
     }
     private void deleteAllProduct() {
-        int deletedRows = getContentResolver().delete(InventoryEntry.CONTENT_URI, null, null);
+        int deletedRows = getContentResolver().delete(ProductEntry.CONTENT_URI, null, null);
 
         if (deletedRows == 0) {
             Toast.makeText(this, R.string.main_delete_all_failed, Toast.LENGTH_SHORT).show();

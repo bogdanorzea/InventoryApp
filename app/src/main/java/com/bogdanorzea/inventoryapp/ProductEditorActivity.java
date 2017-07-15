@@ -30,7 +30,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bogdanorzea.inventoryapp.data.InventoryContract.InventoryEntry;
+import com.bogdanorzea.inventoryapp.data.InventoryContract.ProductEntry;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -48,8 +48,6 @@ public class ProductEditorActivity extends AppCompatActivity {
     private EditText priceEditText;
     private EditText supplierEditText;
     private EditText supplierEmailEditText;
-    private Button orderButton;
-    private Button cameraButton;
     private ImageView productImage;
 
     // Touch listener for the changes to the product
@@ -68,13 +66,13 @@ public class ProductEditorActivity extends AppCompatActivity {
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             // Projection for Cursor
             String[] projection = new String[]{
-                    InventoryEntry.COLUMN_PRODUCT_NAME,
-                    InventoryEntry.COLUMN_DESCRIPTION,
-                    InventoryEntry.COLUMN_QUANTITY,
-                    InventoryEntry.COLUMN_PRICE,
-                    InventoryEntry.COLUMN_SUPPLIER,
-                    InventoryEntry.COLUMN_SUPPLIER_EMAIL,
-                    InventoryEntry.COLUMN_IMAGE
+                    ProductEntry.COLUMN_PRODUCT_NAME,
+                    ProductEntry.COLUMN_DESCRIPTION,
+                    ProductEntry.COLUMN_QUANTITY,
+                    ProductEntry.COLUMN_PRICE,
+                    ProductEntry.COLUMN_SUPPLIER,
+                    ProductEntry.COLUMN_SUPPLIER_EMAIL,
+                    ProductEntry.COLUMN_IMAGE
             };
 
             // Return a Cursor for the data to be displayed
@@ -84,13 +82,13 @@ public class ProductEditorActivity extends AppCompatActivity {
         @Override
         public void onLoadFinished(android.content.Loader<Cursor> loader, Cursor data) {
             // Get column indexes
-            int nameColumnIndex = data.getColumnIndex(InventoryEntry.COLUMN_PRODUCT_NAME);
-            int descriptionColumnIndex = data.getColumnIndex(InventoryEntry.COLUMN_DESCRIPTION);
-            int quantityColumnIndex = data.getColumnIndex(InventoryEntry.COLUMN_QUANTITY);
-            int priceColumnIndex = data.getColumnIndex(InventoryEntry.COLUMN_PRICE);
-            int supplierColumnIndex = data.getColumnIndex(InventoryEntry.COLUMN_SUPPLIER);
-            int supplierEmailColumnIndex = data.getColumnIndex(InventoryEntry.COLUMN_SUPPLIER_EMAIL);
-            int photoColumnIndex = data.getColumnIndex(InventoryEntry.COLUMN_IMAGE);
+            int nameColumnIndex = data.getColumnIndex(ProductEntry.COLUMN_PRODUCT_NAME);
+            int descriptionColumnIndex = data.getColumnIndex(ProductEntry.COLUMN_DESCRIPTION);
+            int quantityColumnIndex = data.getColumnIndex(ProductEntry.COLUMN_QUANTITY);
+            int priceColumnIndex = data.getColumnIndex(ProductEntry.COLUMN_PRICE);
+            int supplierColumnIndex = data.getColumnIndex(ProductEntry.COLUMN_SUPPLIER);
+            int supplierEmailColumnIndex = data.getColumnIndex(ProductEntry.COLUMN_SUPPLIER_EMAIL);
+            int photoColumnIndex = data.getColumnIndex(ProductEntry.COLUMN_IMAGE);
 
             if (data.moveToFirst()) {
                 // Get data from cursor
@@ -280,7 +278,7 @@ public class ProductEditorActivity extends AppCompatActivity {
         supplierEmailEditText.setOnTouchListener(mTouchListener);
 
         // Order button
-        orderButton = (Button) findViewById(R.id.order_button);
+        Button orderButton = (Button) findViewById(R.id.order_button);
         orderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -314,8 +312,8 @@ public class ProductEditorActivity extends AppCompatActivity {
 
         // Image
         productImage = (ImageView) findViewById(R.id.product_image);
-        cameraButton = (Button) findViewById(R.id.camera_button);
-        cameraButton.setOnClickListener(new View.OnClickListener() {
+        Button addImageButton = (Button) findViewById(R.id.add_image_button);
+        addImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
@@ -460,7 +458,7 @@ public class ProductEditorActivity extends AppCompatActivity {
         }
     }
 
-    class LoadImageAsyncTask extends AsyncTask<Intent, Void, Bitmap> {
+    private class LoadImageAsyncTask extends AsyncTask<Intent, Void, Bitmap> {
         @Override
         protected Bitmap doInBackground(Intent... params) {
             try {
@@ -478,7 +476,7 @@ public class ProductEditorActivity extends AppCompatActivity {
         }
     }
 
-    class InsertProductAsyncTask extends AsyncTask<Void, Integer, Boolean> {
+    private class InsertProductAsyncTask extends AsyncTask<Void, Integer, Boolean> {
         private String nameString;
         private String descriptionString;
         private String quantityString;
@@ -539,17 +537,17 @@ public class ProductEditorActivity extends AppCompatActivity {
 
             // Map the values to the corresponding columns
             ContentValues values = new ContentValues();
-            values.put(InventoryEntry.COLUMN_PRODUCT_NAME, nameString);
-            values.put(InventoryEntry.COLUMN_DESCRIPTION, descriptionString);
-            values.put(InventoryEntry.COLUMN_QUANTITY, quantity);
-            values.put(InventoryEntry.COLUMN_PRICE, price);
-            values.put(InventoryEntry.COLUMN_IMAGE, img);
-            values.put(InventoryEntry.COLUMN_SUPPLIER, supplierString);
-            values.put(InventoryEntry.COLUMN_SUPPLIER_EMAIL, supplierEmailString);
+            values.put(ProductEntry.COLUMN_PRODUCT_NAME, nameString);
+            values.put(ProductEntry.COLUMN_DESCRIPTION, descriptionString);
+            values.put(ProductEntry.COLUMN_QUANTITY, quantity);
+            values.put(ProductEntry.COLUMN_PRICE, price);
+            values.put(ProductEntry.COLUMN_IMAGE, img);
+            values.put(ProductEntry.COLUMN_SUPPLIER, supplierString);
+            values.put(ProductEntry.COLUMN_SUPPLIER_EMAIL, supplierEmailString);
 
             if (mCurrentUri == null) {
                 // Insert the new row, returning the URI of the new row
-                Uri newRowUri = getContentResolver().insert(InventoryEntry.CONTENT_URI, values);
+                Uri newRowUri = getContentResolver().insert(ProductEntry.CONTENT_URI, values);
 
                 // Inform the user about the insertion status
                 if (newRowUri != null) {
